@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <div>
+      <h1>제목</h1>
+      <p>설명입니다</p>
+    </div>
+
+    <script>
+      const div = document.querySelector("div");
+      console.log(div.nodeName); // "DIV"
+      console.log(div.children.length); // 2
+      console.log(div.children[0].textContent); // "제목"
+    </script>
+  </body>
+</html>

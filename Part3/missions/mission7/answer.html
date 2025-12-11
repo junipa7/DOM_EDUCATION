@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>[ANSWER] 안정적 초기화 + 데이터 보호 + 로그 신뢰성 + 파싱 최적화</title>
+
+  <!-- 외부 SDK: async로 병렬 다운로드, 파싱 차단 제거 -->
+  <script src="data:text/javascript;charset=utf-8,
+    (function(){
+      setTimeout(function(){
+        console.log('[ANSWER SDK] async 로딩(파싱 차단 없음) + 비동기 초기화 완료');
+      }, 0);
+    })();
+  " async></script>
+
+  <style>
+    :root { --pad: 24px; --bg: #0b1220; --fg: #e5e7eb; --muted:#94a3b8; }
+    @media (prefers-color-scheme: light) {
+      :root { --bg: #ffffff; --fg:#0b1220; --muted:#475569; }
+    }
+    body { font-family: system-ui, sans-serif; margin: var(--pad); background: var(--bg); color: var(--fg); }
+    header { margin-bottom: 12px; }
+    #username .badge { background:#ef4444; color:#fff; padding:2px 6px; margin-left:8px; border-radius:12px; font-size:12px; }
+    #card { background: color-mix(in srgb, var(--fg), transparent 85%); margin-top: 10px; display:flex; align-items:center; justify-content:center; transition: height .2s ease; }
+    textarea { width: 100%; height: 160px; margin-top: 16px; color: inherit; background: color-mix(in srgb, var(--fg), transparent 92%); border: 1px solid color-mix(in srgb, var(--fg), transparent 70%); }
+    .hint { color: var(--muted); font-size: 14px; margin-top: 8px; }
+  </style>
+
+  <script>
+    // --- 유틸: 초안 자동 저장(간단 throttle) ---
+    function throttle(fn, wait){
+      let t = 0, lastArgs = null;
+      return function(...args){
+        const now = Date.now();
+        lastArgs = args;
+        if(now - t >= wait){
+          t = now;
+          fn.apply(this, args);
+        } else {
+          clearTimeout(throttle._tid);
+          throttle._tid = setTimeout(() => {
+            t = Date.now();
+            fn.apply(this, lastArgs);
+          }, wait - (now - t));
+        }
+      }
+    }
+
+    // 1) DOMContentLoaded → 즉시 반응해야 하는 DOM 작업
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("🚀 DOMContentLoaded - DOM 준비 완료");
+
+      // 사용자 이름/알림 배지 표시 (즉시)
+      const usernameEl = document.getElementById("username");
+      usernameEl.textContent = "홍길동님, 환영합니다!";
+      const badge = document.createElement("span");
+      badge.className = "badge";
+      badge.textContent = "3";
+      usernameEl.appendChild(badge);
+
+      // draft 복원
+      const cached = localStorage.getItem("draft");
+      if (cached) document.getElementById("report").value = cached;
+
+      // 입력 중엔 자동 저장(throttle)
+      const saver = throttle((val) => localStorage.setItem("draft", val), 500);
+      document.getElementById("report").addEventListener("input", e => saver(e.target.value));
+    });
+
+    // 2) load → 이미지(리소스) 의존 레이아웃 계산
+    window.addEventListener("load", () => {
+      console.log("🌎 load - 모든 리소스 로딩 완료");
+      const banner = document.getElementById("banner");
+      const card = document.getElementById("card");
+
+      // 배너 실제 높이 기반으로 카드 높이 반영
+      const h = banner.naturalHeight;               // 실제 이미지 높이
+      card.style.height = Math.max(h, 140) + "px";  // 최소 높이 가드
+      console.log("카드 높이(정확히 반영):", card.style.height);
+    });
+
+    // 3) beforeunload → 데이터 보호(경고 + draft 보존)
+    window.addEventListener("beforeunload", (event) => {
+      const text = document.getElementById("report").value;
+      if (text.trim() !== "") {
+        localStorage.setItem("draft", text); // 초안 저장
+        event.preventDefault();
+        event.returnValue = "";              // 브라우저 기본 경고
+      }
+    });
+
+    // 4) unload → 세션 종료 로그(신뢰성 ↑)
+    window.addEventListener("unload", () => {
+      const payload = JSON.stringify({
+        sessionId: "sess-" + Math.floor(performance.timeOrigin),
+        end: Date.now(),
+        page: location.pathname,
+        timeSpentMs: Math.round(performance.now())
+      });
+      // sendBeacon: 종료 직전에도 비동기 전송 시도(완전 보장은 아님)
+      navigator.sendBeacon("/analytics/exit", payload);
+    });
+  </script>
+</head>
+<body>
+  <header>
+    <h1 id="username">로딩 중...</h1>
+    <p class="hint">※ DevTools → Performance에서 Timings(🚀DOMContentLoaded / 🌎load) 마커를 캡처해 비교하세요.</p>
+  </header>
+
+  <!-- 유효한 이미지: 데이터 URI(SVG, 800×200) -->
+  <img id="banner"
+       alt="배너 이미지"
+       src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Cdefs/%3E%3Crect width='100%25' height='100%25' fill='%23dbeafe'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='32' fill='%231d4ed8'%3EAnalytics%20Banner%20800x200%3C/text%3E%3C/svg%3E" />
+
+  <section id="card">
+    <p>카드 콘텐츠(배너 높이에 맞춰 세로 크기가 지정됩니다)</p>
+  </section>
+
+  <textarea id="report" placeholder="여기에 보고서를 작성하세요(작성 중 이탈 시에도 draft가 보존됩니다)"></textarea>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <select id="color">
+      <option value="">색상 선택</option>
+      <option value="red">빨강</option>
+      <option value="blue">파랑</option>
+      <option value="green">초록</option>
+    </select>
+    <p id="result"></p>
+
+    <script>
+      const select = document.getElementById("color");
+      const result = document.getElementById("result");
+
+      select.addEventListener("change", function () {
+        result.textContent = `선택한 색상은 ${select.value}입니다.`;
+      });
+    </script>
+  </body>
+</html>

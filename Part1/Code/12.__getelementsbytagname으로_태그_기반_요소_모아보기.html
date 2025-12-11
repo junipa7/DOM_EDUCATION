@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <p>첫 번째 문단입니다.</p>
+    <p>두 번째 문단입니다.</p>
+    <p>세 번째 문단입니다.</p>
+
+    <script>
+      const paragraphs = document.getElementsByTagName("p");
+
+      for (let i = 0; i < paragraphs.length; i++) {
+        paragraphs[i].style.color = "blue";
+      }
+
+      // 탐색 범위의 한정
+      const box = document.getElementById("container");
+      const spans = box.getElementsByTagName("span");
+    </script>
+  </body>
+</html>

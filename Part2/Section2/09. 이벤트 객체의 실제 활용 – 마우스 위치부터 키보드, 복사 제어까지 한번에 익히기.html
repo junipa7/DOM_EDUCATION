@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button>클릭</button>
+    <script>
+      const button = document.querySelector("button");
+
+      button.addEventListener("click", function (event) {
+        console.log(`마우스 좌표 - X: ${event.clientX}, Y: ${event.clientY}`);
+      });
+
+      // -------------------------
+      document.addEventListener("keydown", function (event) {
+        console.log(event.key);
+      });
+
+      document.addEventListener("keydown", function (e) {
+        console.log(e.key);
+      });
+
+      // -------------------------
+      document.addEventListener("copy", function (event) {
+        alert("복사 금지입니다!");
+        event.preventDefault();
+      });
+
+      // -------------------------
+      console.log("1. 이벤트 등록 시작");
+
+      button.addEventListener("click", function () {
+        console.log("3. 클릭됨 - 콜백 함수 실행");
+      });
+
+      console.log("2. 이벤트 등록 완료");
+    </script>
+  </body>
+</html>

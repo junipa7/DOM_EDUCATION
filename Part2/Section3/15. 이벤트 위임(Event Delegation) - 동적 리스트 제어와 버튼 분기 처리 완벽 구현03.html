@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .completed {
+        text-decoration: line-through;
+        color: gray;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="text" id="itemInput" placeholder="새 항목 입력" />
+    <button id="addBtn">추가</button>
+
+    <ul id="itemList">
+      <li>
+        <span class="item-text">Item 1</span>
+        <button data-action="complete">완료</button>
+        <button data-action="delete">삭제</button>
+      </li>
+      <li>
+        <span class="item-text">Item 2</span>
+        <button data-action="complete">완료</button>
+        <button data-action="delete">삭제</button>
+      </li>
+    </ul>
+
+    <script>
+      const itemList = document.getElementById("itemList");
+      const itemInput = document.getElementById("itemInput");
+      const addBtn = document.getElementById("addBtn");
+
+      let items = []
+      let idCounter = 0;
+
+      addBtn.addEventListener("click", function () {
+        const value = itemInput.value.trim();
+        if (value === "") return;
+
+        const item = {
+          id: idCounter++,
+          text: value,
+          done: false,
+        };
+
+        items.push(item);
+        renderItem(item);
+        itemInput.value = "";
+      });
+
+      function renderItem(item){
+        const li = document.createElement("li");
+        li.setAttribute("data-id", item.id);
+
+        li.innerHTML = `
+          <span class="item-text">${item.done ? "completed" : ""}">${item.text}</span>
+          <button data-action="complete">완료</button>
+          <button data-action="delete">삭제</button>
+          `;
+
+        itemList.appendChild(li);
+      }
+
+      itemList.addEventListener("click", function (event) {
+        const action = event.target.dataset.action;
+
+        if (!action) return;
+
+        const listItem = event.target.closest("li");
+        const id = parseInt(listItem.dataset.id);
+        const item = items.find((i) => i.id === id);
+
+        if (action === "delete") {
+          items = items.filter((i) => i.id !== id);
+          listItem.remove();
+        }
+
+        if (action === "complete") {
+          item.done = !item.done;
+          const text = listItem.querySelector(".item-text");
+          text.classList.toggle("completed");
+        }
+      });
+
+    </script>
+  </body>
+</html>

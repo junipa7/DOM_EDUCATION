@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CLS 미션 - Base (Worse)</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        margin: 0;
+        padding: 24px;
+        line-height: 1.5;
+      }
+      .hud {
+        position: fixed;
+        top: 12px;
+        right: 12px;
+        background: #111;
+        color: #fff;
+        padding: 10px 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        z-index: 9999;
+      }
+
+      /* 큰 이미지(높이 미지정) → 늦게 로드되면 화면 전체 밀림 */
+      #hero {
+        width: 100%;
+        display: block;
+      }
+
+      .card {
+        margin-top: 16px;
+        padding: 12px;
+        background: #f3f3f3;
+        border-radius: 8px;
+      }
+
+      /* 광고 바: 갑자기 prepend → 기존 콘텐츠 모두 아래로 */
+      .ad-bar {
+        width: 100%;
+        height: 120px;
+        background: #ffe066;
+        color: #222;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        border: 2px dashed #222;
+      }
+
+      /* 배너: left 이동으로 레이아웃 재계산 발생 */
+      .banner {
+        position: relative;
+        margin-top: 24px;
+        width: 120px;
+        height: 40px;
+        background: #ff6b6b;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .banner.move {
+        transition: left 400ms ease;
+        left: 260px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hud">CLS: <span id="cls">0.000</span></div>
+
+    <!-- 최상단 이미지 mount -->
+    <div id="image-mount"></div>
+
+    <h1>레이아웃 셰프트 Base 페이지</h1>
+    <p>로딩 중 요소가 여러 번 밀리도록 설계된 예시입니다.</p>
+
+    <div class="card" id="card1">
+      이 문장은 큰 이미지가 뒤늦게 들어오면 아래로 밀릴 수 있습니다.
+    </div>
+
+    <div class="banner" id="banner">BUY</div>
+
+    <script>
+      // CLS HUD
+      (function measureCLS() {
+        let clsValue = 0;
+        const clsEl = document.getElementById("cls");
+        if ("PerformanceObserver" in window) {
+          const po = new PerformanceObserver((list) => {
+            for (const entry of list.getEntries()) {
+              if (!entry.hadRecentInput) {
+                clsValue += entry.value;
+                clsEl.textContent = clsValue.toFixed(3);
+              }
+            }
+          });
+          try {
+            po.observe({ type: "layout-shift", buffered: true });
+          } catch (e) {
+            console.warn("layout-shift 관찰 불가:", e);
+          }
+        }
+      })();
+
+      // 1) 800ms: 큰 이미지 늦게 삽입 → 첫 셰프트
+      setTimeout(() => {
+        const img = document.createElement("img");
+        img.id = "hero";
+        img.alt = "큰 이미지";
+        img.src =
+          "https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.jpg";
+        document.getElementById("image-mount").appendChild(img);
+      }, 800);
+
+      // 2) 1500ms: 상단 광고 prepend → 전체 밀림
+      setTimeout(() => {
+        const ad = document.createElement("div");
+        ad.className = "ad-bar";
+        ad.textContent = "광고 영역 – Late Insertion";
+        document.body.prepend(ad);
+      }, 1500);
+
+      // 3) 2000ms: 배너 left 이동 → 레이아웃 재계산
+      setTimeout(() => {
+        document.getElementById("banner").classList.add("move");
+      }, 2000);
+
+      // 4) 2300ms: 이미지 높이 강제 확대 → 또 밀림
+      setTimeout(() => {
+        const hero = document.getElementById("hero");
+        if (hero) {
+          hero.style.height = "1200px";
+          hero.style.objectFit = "cover";
+        }
+      }, 2300);
+
+      // 5) 2600ms: 카드 위에 공지 삽입 → 또 밀림
+      setTimeout(() => {
+        const notice = document.createElement("div");
+        notice.className = "card";
+        notice.textContent = "공지: 나중에 도착하여 본문을 밀어냅니다.";
+        const card1 = document.getElementById("card1");
+        card1.parentNode.insertBefore(notice, card1);
+      }, 2600);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button>클릭</button>
+    <input type="checkbox" id="chk1-label" />
+    <label for="chk1-label">여기를 누르거나 Check해보기</label>
+
+      <script>
+      const button = document.querySelector("button");
+
+      button.addEventListener("click", function (event) {
+        console.log("Event", event); // pointerEvent
+      });
+
+      // ----------------------
+
+      document.addEventListener("click", function (event) {
+        console.log("클릭된 요소:", event.target);
+      });
+
+      // -----------------------
+
+      button.addEventListener("click", function () {
+        console.log("this", this); // 버튼 요소 출력
+      });
+    </script>
+  </body>
+</html>

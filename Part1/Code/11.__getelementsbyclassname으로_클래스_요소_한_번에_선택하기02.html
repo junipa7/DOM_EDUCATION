@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>getElementsByClassName 실습</title>
+  </head>
+  <body>
+    <ul>
+      <li class="menu-item">홈</li>
+      <li class="menu-item">소개</li>
+      <li class="menu-item">문의</li>
+    </ul>
+    <script>
+      const items = document.getElementsByClassName("menu-item");
+      for (let i = 0; i < items.length; i++) {
+        items[i].style.fontWeight = "bold";
+        items[i].style.color = "blue";
+      }
+    </script>
+  </body>
+</html>

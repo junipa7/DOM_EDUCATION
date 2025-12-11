@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Layout Shift 실습</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+      }
+
+      #img {
+        width: 100%;
+        /* height 없음 → 브라우저가 공간 예측 못함 */
+      }
+
+      .text {
+        margin-top: 20px;
+        padding: 10px;
+        background: #f0f0f0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Layout Shift 테스트</h1>
+    <p>이 텍스트는 아래에 이미지가 없다고 가정하고 렌더링됩니다.</p>
+
+    <div id="container"></div>
+
+    <div class="text">
+      👇 이 문장은 이미지가 삽입되면서 아래로 밀리게 됩니다.
+    </div>
+
+    <script>
+      setTimeout(() => {
+        const img = document.createElement("img");
+        img.src =
+          "https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.jpg";
+        img.id = "img";
+        img.alt = "Test Image";
+        document.getElementById("container").appendChild(img);
+      }, 1500);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- <form id="join-form" novalidate> -->
+    <form id="join-form">
+      <label>
+        이메일
+        <input
+          type="email"
+          name="email"
+          required
+          aria-describedby="email-desc"
+        />
+        <span class="error-icon">⚠️</span>
+        <span id="email-desc" class="error-message" aria-live="polite"></span>
+      </label>
+      <button type="submit">가입하기</button>
+    </form>
+
+    <script>
+      const form = document.getElementById("join-form");
+      const emailInput = form.email;
+      const errorIcon = form.querySelector(".error-icon");
+      const errorMsg = document.getElementById("email-desc");
+
+      emailInput.addEventListener("input", function () {
+        const value = emailInput.value.trim();
+
+        // 항상 먼저 validity 초기화
+        emailInput.setCustomValidity("");
+
+        if (!value) {
+          emailInput.setCustomValidity("이메일을 입력해주세요.");
+          errorMsg.textContent = "이메일을 입력해주세요.";
+          errorIcon.style.visibility = "visible";
+        } else if (!emailInput.checkValidity()) {
+          emailInput.setCustomValidity("올바른 이메일 형식이 아닙니다.");
+          errorMsg.textContent = "올바른 이메일 형식이 아닙니다.";
+          errorIcon.style.visibility = "visible";
+        } else {
+          emailInput.setCustomValidity("");
+          errorMsg.textContent = "";
+          errorIcon.style.visibility = "hidden";
+        }
+      });
+
+      form.addEventListener("submit", function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault(); // 제출 중단
+          form.reportValidity(); // 브라우저 기본 UI로 오류 표시
+          return;
+        }
+
+        console.log("제출 준비 완료. 서버 전송 가능.");
+      });
+    </script>
+  </body>
+</html>

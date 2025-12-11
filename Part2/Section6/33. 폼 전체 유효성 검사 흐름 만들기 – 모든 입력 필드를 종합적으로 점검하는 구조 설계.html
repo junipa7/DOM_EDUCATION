@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form id="signup-form">
+      <input type="text" name="username" placeholder="이름" />
+      <input type="email" name="email" placeholder="이메일" />
+      <button type="submit">가입하기</button>
+    </form>
+
+    <script>
+      document
+        .getElementById("signup-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const form = event.target;
+          const username = form.username.value.trim();
+          const email = form.email.value.trim();
+
+          let isValid = true;
+
+          if (!username) {
+            alert("이름을 입력해주세요.");
+            isValid = false;
+          }
+
+          if (!email) {
+            alert("이메일을 입력해주세요.");
+            isValid = false;
+          } else if (!email.includes("@")) {
+            alert("올바른 이메일 형식을 입력해주세요.");
+            isValid = false;
+          }
+
+          if (isValid) {
+            console.log("폼 제출 준비 완료!");
+            // 이후 서버로 전송 (Ajax, fetch 등)
+          } else {
+            console.log("유효성 검사 실패 – 제출 중단됨");
+          }
+        });
+    </script>
+  </body>
+</html>

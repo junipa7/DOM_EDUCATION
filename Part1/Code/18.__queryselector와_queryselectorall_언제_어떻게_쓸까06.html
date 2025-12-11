@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <ul>
+      <li class="item" data-id="1">Item 1</li>
+      <li class="item" data-id="2">Item 2</li>
+      <li class="item" data-id="3" hidden>Item 3</li>
+    </ul>
+
+    <script>
+      const saleItems = document.querySelectorAll(
+        '.product[data-category="sale"]'
+      );
+      saleItems.forEach((el) => {
+        el.classList.add("highlight");
+      });
+
+      const card = document.querySelector(".card"); // 첫 번째 카드
+      const desc = card.querySelector(".desc"); // 해당 카드 안의 설명만 선택
+      console.log(desc.textContent); // 이것은 첫 번째 카드입니다.
+
+      const list = document.querySelectorAll(".item");
+      const ul = document.querySelector("ul");
+
+      // ----------------
+      const newLi = document.createElement("li");
+      newLi.className = "item";
+      newLi.textContent = "Item 4";
+      ul.appendChild(newLi);
+
+      console.log(list.length); // 여전히 3 (고정된 NodeList)
+
+      button.addEventListener("click", () => {
+        const items = document.querySelectorAll(".item"); // 매번 새로 갱신
+        items.forEach((el) => el.classList.add("updated"));
+      });
+    </script>
+  </body>
+</html>

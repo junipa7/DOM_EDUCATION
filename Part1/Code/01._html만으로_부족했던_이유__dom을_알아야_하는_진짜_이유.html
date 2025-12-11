@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>안녕하세요</h1>
+    <p>이것은 문단입니다.</p>
+
+    <!-- --------- -->
+
+    <body>
+      <div>
+        <p>Hello</p>
+      </div>
+    </body>
+
+    <!-- --------- -->
+
+    <button id="btn">눌러보세요</button>
+    <p id="text">안녕하세요</p>
+
+    <script>
+      const button = document.getElementById("btn");
+      const text = document.getElementById("text");
+
+      button.addEventListener("click", () => {
+        text.textContent = "DOM을 통해 바뀌었어요!";
+      });
+    </script>
+  </body>
+</html>

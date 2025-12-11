@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <div id="card">
+      <h2>제목</h2>
+      <p>설명</p>
+      <button>클릭</button>
+    </div>
+
+    <script>
+      const btn = document.querySelector("button");
+
+      console.log(btn.parentNode); // 부모 요소: <div id="card">
+      console.log(btn.previousElementSibling); // 바로 이전 형제 요소: <p>
+      console.log(btn.parentNode.children); // 자식 요소들: [h2, p, button]
+    </script>
+  </body>
+</html>

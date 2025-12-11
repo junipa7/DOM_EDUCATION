@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <ul>
+      <li>Item 1</li>
+      <li>Item 2</li>
+    </ul>
+
+    <script>
+      const ul = document.querySelector("ul");
+      console.log(ul.childNodes);
+      console.log(ul.children);
+
+      /*
+    // 모든 노드 포함 (줄바꿈 포함)
+    NodeList(5) [#text, <li>, #text, <li>, #text]
+
+    // 요소 노드만 포함
+    HTMLCollection(2) [<li>, <li>]  
+      */
+
+      // <ul>                   ← Element Node
+      // \n                   ← Text Node (줄바꿈)
+      // <li>Item 1</li>      ← Element Node
+      // \n                   ← Text Node (줄바꿈)
+      // <li>Item 2</li>      ← Element Node
+      // \n                   ← Text Node (줄바꿈)
+      // </ul>
+
+      for (const li of ul.children) {
+        li.classList.add("active");
+      }
+
+      for (const node of ul.childNodes) {
+        node.classList.add("active"); // ❌ Text Node에서 오류 발생
+      }
+
+      console.log(ul.firstChild); // #text (줄바꿈 텍스트 노드)
+      console.log(ul.firstElementChild); // <li>Item 1</li>
+    </script>
+  </body>
+</html>

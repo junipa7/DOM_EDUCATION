@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>이벤트 실습</title>
+  </head>
+  <body>
+    <input id="nameInput" placeholder="이름을 입력하세요" />
+    <button id="generateBtn">프로필 생성</button>
+
+    <div
+      id="profileBox"
+      style="
+        position: relative;
+        padding: 50px;
+        border: 1px solid #ccc;
+        margin-top: 30px;
+      "
+    >
+      🧑 사용자 프로필
+    </div>
+
+    <script>
+      const input = document.getElementById("nameInput");
+      const button = document.getElementById("generateBtn");
+      const profileBox = document.getElementById("profileBox");
+
+      let tooltip = null; // 툴팁 DOM 참조 변수
+      let moveHandler = null; // mousemove 핸들러 참조
+
+      // 1. 키보드 입력 추적
+      input.addEventListener("keydown", (event) => {
+        console.log("입력 키:", event.key);
+      });
+
+      // 2. 복사 방지
+      document.addEventListener("copy", (event) => {
+        alert("복사 금지입니다.");
+        event.preventDefault();
+      });
+
+      // 3. 버튼 1회 클릭만 허용
+      button.addEventListener(
+        "click",
+        () => {
+          alert("랜덤 프로필 생성 완료!");
+        },
+        { once: true }
+      );
+
+      // 4-1. 툴팁 생성 함수
+      function showTooltip(event) {
+        if (document.querySelector(".tooltip")) return;
+
+        console.log("툴팁 이벤트 등록됨");
+
+        tooltip = document.createElement("div");
+        tooltip.textContent = "프로필 이미지입니다.";
+        tooltip.className = "tooltip";
+        tooltip.style.position = "absolute";
+        tooltip.style.background = "black";
+        tooltip.style.color = "white";
+        tooltip.style.padding = "6px";
+        tooltip.style.borderRadius = "4px";
+        tooltip.style.pointerEvents = "none";
+
+        profileBox.appendChild(tooltip);
+
+        moveHandler = moveTooltip;
+        profileBox.addEventListener("mousemove", moveHandler);
+        moveTooltip(event); // 초기 위치 세팅
+      }
+
+      // 4-2. 툴팁 위치 갱신 함수
+      function moveTooltip(event) {
+        if (!tooltip) return;
+        tooltip.style.left = event.offsetX + 15 + "px";
+        tooltip.style.top = event.offsetY + 15 + "px";
+      }
+
+      // 4-3. 툴팁 제거 및 mousemove 제거
+      function hideTooltip() {
+        if (tooltip) {
+          tooltip.remove();
+          tooltip = null;
+        }
+
+        if (moveHandler) {
+          profileBox.removeEventListener("mousemove", moveHandler);
+          moveHandler = null;
+          console.log("툴팁 이벤트 제거됨");
+        }
+      }
+
+      // 마우스 진입 / 이탈 리스너 등록
+      profileBox.addEventListener("mouseenter", showTooltip);
+      profileBox.addEventListener("mouseleave", hideTooltip);
+    </script>
+  </body>
+</html>

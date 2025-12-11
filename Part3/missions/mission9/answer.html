@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>[ANSWER] async / defer 적용</title>
+
+  <!-- ✅ 광고/트래킹: async (순서 상관 없음, 다운로드 끝나는 즉시 실행) -->
+  <script src="./answer-js/ads.js" async></script>
+  <script src="./answer-js/tracking.js" async></script>
+
+  <!-- ✅ 메인 로직: defer (HTML 파싱과 병렬 다운로드, 파싱 완료 후 실행) -->
+  <script src="./answer-js/main.js" defer></script>
+
+  <!-- ✅ 외부 도메인 최적화(선택): preconnect & SRI 예시 -->
+  <!-- <link rel="preconnect" href="https://ads.example.com" crossorigin> -->
+  <!-- <script src="https://cdn.example.com/analytics.js"
+            async integrity="sha384-...yourhash..." crossorigin="anonymous"></script> -->
+</head>
+<body>
+  <h1>JS Blocking 최적화</h1>
+  <p>DOMContentLoaded / load 타이밍을 확인해보세요</p>
+  <button id="cta">지금 시작</button>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("🚀 DOMContentLoaded (ANSWER)");
+    });
+    window.addEventListener("load", () => {
+      console.log("🌎 load (ANSWER)");
+    });
+  </script>
+</body>
+</html>

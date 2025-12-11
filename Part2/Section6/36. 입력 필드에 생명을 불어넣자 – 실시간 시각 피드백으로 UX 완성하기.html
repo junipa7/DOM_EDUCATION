@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      input {
+        border: 2px solid #ccc;
+        outline: none;
+        padding: 8px;
+        font-size: 14px;
+        border-radius: 4px;
+      }
+
+      input.invalid {
+        border-color: red;
+      }
+
+      input.valid {
+        border-color: green;
+      }
+
+      .error {
+        color: red;
+        font-size: 12px;
+        margin-top: 4px;
+        display: block;
+        height: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="signup-form">
+      <input
+        type="text"
+        name="username"
+        placeholder="닉네임"
+        required
+        minlength="2"
+      />
+      <span class="error" id="username-error"></span>
+
+      <input type="email" name="email" placeholder="이메일" required />
+      <span class="error" id="email-error"></span>
+
+      <input
+        type="password"
+        name="password"
+        placeholder="비밀번호"
+        required
+        minlength="6"
+      />
+      <span class="error" id="password-error"></span>
+
+      <button type="submit">가입하기</button>
+    </form>
+
+    <script>
+      const form = document.getElementById("signup-form");
+
+      const fields = ["username", "email", "password"];
+
+      fields.forEach((fieldName) => {
+        const input = form[fieldName];
+        const error = document.getElementById(`${fieldName}-error`);
+
+        input.addEventListener("focus", () => {
+          error.textContent = "";
+          input.classList.remove("invalid", "valid");
+        });
+
+        input.addEventListener("input", () => {
+          if (!input.validity.valid) {
+            error.textContent = getErrorMessage(input);
+            input.classList.add("invalid");
+            input.classList.remove("valid");
+          } else {
+            error.textContent = "";
+            input.classList.add("valid");
+            input.classList.remove("invalid");
+          }
+        });
+
+        input.addEventListener("blur", () => {
+          if (!input.validity.valid) {
+            error.textContent = getErrorMessage(input);
+            input.classList.add("invalid");
+            input.classList.remove("valid");
+          }
+        });
+      });
+
+      function getErrorMessage(input) {
+        if (input.validity.valueMissing) {
+          return "이 필드는 필수 입력 항목입니다.";
+        }
+        if (input.validity.tooShort) {
+          return `최소 ${input.minLength}자 이상 입력해주세요.`;
+        }
+        if (input.validity.typeMismatch) {
+          return "올바른 형식을 입력해주세요.";
+        }
+        return "입력값이 유효하지 않습니다.";
+      }
+    </script>
+  </body>
+</html>

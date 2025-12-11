@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .liked {
+        color: red;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>💬 댓글 목록</h2>
+    <input type="text" id="commentInput" placeholder="댓글을 입력하세요" />
+    <button id="submitBtn">댓글 등록</button>
+
+    <ul id="commentList">
+      <!-- 동적으로 댓글이 생성됨 -->
+    </ul>
+
+    <script>
+      const commentInput = document.getElementById("commentInput");
+      const submitBtn = document.getElementById("submitBtn");
+      const commentList = document.getElementById("commentList");
+
+      let comments = [];
+      let idCounter = 1;
+
+      submitBtn.addEventListener("click", () => {
+        const text = commentInput.value.trim();
+        if (text === "") return;
+
+        const newComment = {
+          id: idCounter++,
+          text,
+          liked: false,
+        };
+
+        comments.push(newComment);
+        renderComment(newComment);
+        commentInput.value = "";
+      });
+
+      function renderComment(comment) {
+        const li = document.createElement("li");
+
+        li.innerHTML = `
+    <p class="comment-text">${comment.text}</p>
+    <button class="like-btn" data-id="${comment.id}">
+      ❤️ 좋아요
+    </button>
+  `;
+
+        commentList.appendChild(li);
+      }
+
+      commentList.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!target.classList.contains("like-btn")) return;
+
+        const id = parseInt(target.dataset.id);
+        const comment = comments.find((c) => c.id === id);
+        comment.liked = !comment.liked;
+
+        // UI 반영
+        target.classList.toggle("liked");
+        target.textContent = comment.liked ? "💔 좋아요 취소" : "❤️ 좋아요";
+      });
+    </script>
+  </body>
+</html>

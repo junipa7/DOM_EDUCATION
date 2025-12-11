@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="outer" style="padding: 20px; background: lightblue">
+      Outer
+      <div id="inner" style="padding: 20px; background: lightgreen">
+        Inner
+        <button id="btn">Click me</button>
+      </div>
+    </div>
+
+    <script>
+      const btn = document.getElementById("btn");
+
+      btn.addEventListener("click", function () {
+        console.log("First listener");
+      });
+
+      btn.addEventListener("click", function (e) {
+        e.stopImmediatePropagation();
+        console.log("Second listener (stops all)");
+      });
+
+      btn.addEventListener("click", function () {
+        console.log("Third listener (never runs)");
+      });
+    </script>
+  </body>
+</html>

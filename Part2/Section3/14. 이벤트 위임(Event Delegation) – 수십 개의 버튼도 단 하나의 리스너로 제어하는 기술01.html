@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <ul id="menu">
+      <li><button>수정</button></li>
+      <li><button>삭제</button></li>
+      <li><button>복사</button></li>
+    </ul>
+
+    <script>
+      const menu = document.getElementById("menu");
+
+      menu.addEventListener("click", function (event) {
+        if (event.target.tagName === "BUTTON") {
+          console.log(`${event.target.textContent} 버튼이 클릭되었습니다.`);
+        }
+      });
+
+      menu.addEventListener("click", function (event) {
+        if (
+          event.target.tagName === "BUTTON" &&
+          event.target.textContent === "삭제"
+        ) {
+          console.log("삭제 동작 실행");
+        }
+      });
+    </script>
+  </body>
+</html>

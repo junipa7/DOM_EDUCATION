@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <ul id="todo-list">
+      <!-- 자바스크립트로 항목이 계속 추가됨 -->
+    </ul>
+
+    <button id="add-todo">할 일 추가</button>
+
+    <script>
+      const list = document.getElementById("todo-list");
+
+      list.addEventListener("click", (event) => {
+        if (event.target.tagName === "LI") {
+          console.log("할 일을 클릭했습니다!");
+        }
+      });
+    </script>
+  </body>
+</html>

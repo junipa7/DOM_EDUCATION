@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <ul>
+      <li class="menu-item active">Home</li>
+      <li class="menu-item">About</li>
+    </ul>
+
+    <script>
+      const menu = document.querySelector("ul");
+      const items = menu.getElementsByClassName("menu-item");
+
+      const activeItem = document.getElementsByClassName("menu-item active");
+      console.log(activeItem.length); // 1개만 선택됨
+    </script>
+  </body>
+</html>

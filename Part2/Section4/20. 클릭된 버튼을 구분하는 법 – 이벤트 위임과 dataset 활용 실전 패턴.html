@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <ul id="menu">
+      <li><button data-action="edit">수정</button></li>
+      <li><button data-action="delete">삭제</button></li>
+      <li><button data-action="share">공유</button></li>
+      <li><button data-action="download">다운로드</button></li>
+    </ul>
+
+    <script>
+      const menu = document.getElementById("menu");
+
+      menu.addEventListener("click", function (event) {
+        const action = event.target.dataset.action;
+
+        if (!action) return;
+
+        if (action === "edit") {
+          console.log("수정 기능을 실행합니다.");
+        } else if (action === "delete") {
+          console.log("삭제 기능을 실행합니다.");
+        } else if (action === "share") {
+          console.log("공유 기능을 실행합니다.");
+        } else if (action === "download") {
+          console.log("파일을 다운로드합니다.");
+        }
+      });
+    </script>
+  </body>
+</html>

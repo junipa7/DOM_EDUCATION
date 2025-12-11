@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      window.addEventListener("beforeunload", (event) => {
+        if (hasUnsavedChanges()) {
+          event.preventDefault();
+          event.returnValue = ""; // 최신 브라우저에서는 이 값은 무시되며, 단순히 경고창 표시 여부만 결정합니다.
+        }
+      });
+    </script>
+  </body>
+</html>

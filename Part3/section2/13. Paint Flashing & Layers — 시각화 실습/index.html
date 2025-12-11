@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Paint Flashing & Layer Test</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 50px;
+      }
+
+      .hover-button {
+        width: 200px;
+        height: 60px;
+        background: lightblue;
+        border: none;
+        font-size: 18px;
+        transition: background-color 0.3s;
+      }
+
+      .hover-button:hover {
+        background: rgb(102, 255, 204);
+      }
+
+      .moving-box {
+        width: 100px;
+        height: 100px;
+        background: tomato;
+        position: relative;
+        animation: slide 2s infinite alternate;
+        will-change: transform;
+      }
+
+      @keyframes slide {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(300px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Paint Flashing / Layer Test</h2>
+    <button class="hover-button">Hover Me</button>
+    <div style="height: 50px"></div>
+    <div class="moving-box"></div>
+  </body>
+</html>

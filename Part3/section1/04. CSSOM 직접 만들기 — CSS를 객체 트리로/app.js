@@ -1,0 +1,67 @@
+function parseCSS(cssText) {
+  const ruleRegex = /(\w+)\s*\{([^}]+)\}/g;
+  const styleSheet = [];
+  let match;
+
+  while ((match = ruleRegex.exec(cssText))) {
+    console.log("\n🎯 새로운 규칙 발견:");
+    console.log("전체 match:", match);
+
+    const selector = match[1];
+    const declarationsBlock = match[2];
+
+    console.log(`선택자: ${selector}`);
+    console.log(`선언부: ${declarationsBlock}`);
+
+    const declarations = declarationsBlock
+      .split(";")
+      .filter(Boolean)
+      .map((decl) => {
+        const [property, value] = decl.split(":").map((s) => s.trim());
+        console.log(`  속성: ${property}, 값: ${value}`);
+        return { property, value };
+      });
+
+    const rule = { selector, declarations };
+    styleSheet.push(rule);
+
+    console.log("\n📦 현재 CSSOM 트리 상태:");
+    console.dir(JSON.stringify(styleSheet, null, 2));
+  }
+
+  return styleSheet;
+}
+
+const cssCode = `
+  h1 {
+    color: blue;
+    font-size: 24px;
+  }
+
+  p {
+    color: gray;
+  }
+`;
+
+console.log("\n=== CSS 파싱 시작 ===");
+const cssOM = parseCSS(cssCode);
+console.log("\n✅ 최종 CSSOM 결과:");
+console.dir(cssOM, { depth: null });
+
+/*
+[
+  {
+    "selector": "h1",
+    "declarations": [
+      { "property": "color", "value": "blue" },
+      { "property": "font-size", "value": "24px" }
+    ]
+  },
+  {
+    "selector": "p",
+    "declarations": [
+      { "property": "color", "value": "gray" }
+    ]
+  }
+]
+*/

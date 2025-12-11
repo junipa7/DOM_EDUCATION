@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+      /* style.css */
+      .highlight {
+        background-color: yellow;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      const box = document.querySelector(".box");
+      console.log(box.className); // "box active"
+      box.className = "box highlight"; // 클래스 전체 교체
+
+      // --------
+      const box = document.querySelector(".box");
+      box.classList.add("active");
+
+      // --------
+      const box = document.querySelector(".box");
+      box.classList.remove("hidden");
+
+      // --------
+      const box = document.querySelector(".box");
+      box.classList.toggle("highlight");
+
+      // ---------
+      const box = document.querySelector(".box");
+      console.log(box.classList.contains("active")); // true 또는 false
+
+      // ---------
+      const box = document.querySelector(".box");
+      box.style.backgroundColor = "red";
+      box.style.border = "1px solid black";
+
+      // ---------
+      box.style.fontSize = "20px";
+      box.style.zIndex = "10";
+
+      // ---------
+      // 성능이 나쁜 방식
+      const items = document.querySelectorAll(".item");
+      items.forEach((item) => {
+        item.style.backgroundColor = "yellow";
+        item.style.fontWeight = "bold";
+      });
+
+      // ------------
+      // 성능이 좋은 방식
+      const items = document.querySelectorAll(".item");
+      items.forEach((item) => {
+        item.classList.add("highlight");
+      });
+    </script>
+  </body>
+</html>

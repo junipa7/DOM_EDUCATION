@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>[BASE] Blocking JS</title>
+
+  <!-- 문제: head에 광고/트래킹 스크립트가 blocking -->
+  <script src="./base-js/ads.js"></script>
+  <script src="./base-js/tracking.js"></script>
+</head>
+<body>
+  <h1>JS Blocking 실험</h1>
+  <p>버튼 클릭 시 반응 속도를 확인해보세요</p>
+  <button id="cta">지금 시작</button>
+
+  <!-- 문제: main.js도 body 하단에서 blocking -->
+  <script src="./base-js/main.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("🚀 DOMContentLoaded (BASE)");
+    });
+    window.addEventListener("load", () => {
+      console.log("🌎 load (BASE)");
+    });
+  </script>
+</body>
+</html>

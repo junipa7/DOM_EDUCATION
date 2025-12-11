@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>[BASE] 매거진 랜딩 - 성능 문제</title>
+
+  <!-- 문제: Fonts를 stylesheet로만 로드 -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700" rel="stylesheet">
+
+  <style>
+    body{margin:0;font-family:Roboto, system-ui, -apple-system, Segoe UI, Noto Sans, sans-serif;line-height:1.6}
+    header{padding:24px 16px;border-bottom:1px solid #eee;font-weight:bold;font-size:20px}
+    .hero{max-width:1100px;margin:24px auto;padding:0 16px}
+    .hero h1{font-size:48px;margin:12px 0}
+    .hero img{width:100%;border-radius:12px}
+    .grid{max-width:1100px;margin:24px auto;padding:0 16px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .card img{width:100%;border-radius:8px}
+    .media{max-width:1100px;margin:24px auto;padding:0 16px}
+    video{width:100%;border-radius:12px;background:#000}
+  </style>
+</head>
+<body>
+  <header>매거진 / Weekly</header>
+
+  <main class="hero">
+    <h1>도시의 주말 산책 코스</h1>
+    <!-- 모든 이미지를 즉시 로드 -->
+    <img src="https://picsum.photos/id/1015/1200/700" alt="hero">
+    <p>사진과 이야기가 있는 주말, 도시 속 자연을 걸어요.</p>
+  </main>
+
+  <section class="grid">
+    <article class="card"><img src="https://picsum.photos/id/1025/600/400" alt=""></article>
+    <article class="card"><img src="https://picsum.photos/id/1035/600/400" alt=""></article>
+    <article class="card"><img src="https://picsum.photos/id/1045/600/400" alt=""></article>
+    <article class="card"><img src="https://picsum.photos/id/1055/600/400" alt=""></article>
+    <article class="card"><img src="https://picsum.photos/id/1065/600/400" alt=""></article>
+    <article class="card"><img src="https://picsum.photos/id/1075/600/400" alt=""></article>
+  </section>
+
+  <section class="media">
+    <h2>도심 산책 브이로그</h2>
+    <!-- video 소스가 초기부터 즉시 요청 -->
+    <video controls>
+      <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm" type="video/webm">
+      <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+    </video>
+  </section>
+</body>
+</html>

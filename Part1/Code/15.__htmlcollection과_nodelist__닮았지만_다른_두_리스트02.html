@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <div id="test">
+      <p>하나</p>
+      <p>둘</p>
+    </div>
+
+    <script>
+      const nodes = document.querySelectorAll("#test p");
+
+      console.log(nodes.length); // 2
+
+      const extra = document.createElement("p");
+      extra.textContent = "셋";
+      document.getElementById("test").appendChild(extra);
+
+      console.log(nodes.length); // 여전히 2 (정적)
+    </script>
+  </body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>알림 카드 인터페이스</title>
+    <style>
+      .card {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 8px 0;
+        border-radius: 8px;
+        background: #f9f9f9;
+      }
+      .card button {
+        margin-left: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="add-alert">새 알림 추가</button>
+
+    <ul id="notification-list">
+      <li class="card">
+        <a href="#" class="title">[공지] 서비스 점검 안내</a>
+        <button class="pin" data-action="pin">📌</button>
+        <button class="remove" data-action="delete">🗑</button>
+        <button class="mark" data-action="check">✔️</button>
+      </li>
+      <li class="card">
+        <a href="#" class="title">[알림] 이용약관 변경</a>
+        <button class="pin" data-action="pin">📌</button>
+        <button class="remove" data-action="delete">🗑</button>
+        <button class="mark" data-action="check">✔️</button>
+      </li>
+    </ul>
+
+    <script>
+      const list = document.getElementById("notification-list");
+
+      list.addEventListener("click", (event) => {
+        event.preventDefault(); // 링크 클릭 시 이동 방지
+
+        const card = event.target.closest(".card");
+        if (!card) return;
+
+        const action = event.target.dataset.action;
+
+        // 버튼 클릭인 경우
+        if (action === "pin") {
+          console.log("🔝 고정됨");
+          event.stopPropagation();
+          return;
+        }
+
+        if (action === "delete") {
+          card.remove();
+          event.stopPropagation();
+          return;
+        }
+
+        if (action === "check") {
+          console.log("✅ 확인됨");
+          event.stopPropagation();
+          return;
+        }
+
+        // 상세 보기: 버튼 외 영역 클릭 시만 동작
+        if (!event.target.closest("button")) {
+          console.log("🔍 상세 보기");
+        }
+      });
+
+      const addBtn = document.getElementById("add-alert");
+
+      addBtn.addEventListener("click", () => {
+        const li = document.createElement("li");
+        li.className = "card";
+        li.innerHTML = `
+        <a href="#" class="title">[새 알림] 업데이트 도착</a>
+        <button class="pin" data-action="pin">📌</button>
+        <button class="remove" data-action="delete">🗑</button>
+        <button class="mark" data-action="check">✔️</button>
+      `;
+        list.appendChild(li);
+      });
+    </script>
+  </body>
+</html>

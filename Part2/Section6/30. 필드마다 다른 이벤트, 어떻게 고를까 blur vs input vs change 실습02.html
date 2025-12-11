@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form id="signup-form">
+      <label>
+        아이디
+        <input type="text" name="username" />
+        <span class="error-message"></span>
+      </label>
+      <label>
+        이메일
+        <input type="email" name="email" />
+        <span class="error-message"></span>
+      </label>
+      <label>
+        비밀번호
+        <input type="password" name="password" />
+        <span class="error-message"></span>
+      </label>
+      <button type="submit">회원가입</button>
+    </form>
+
+    <script>
+      const form = document.getElementById("signup-form");
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const username = form.username.value.trim();
+        const email = form.email.value.trim();
+        const password = form.password.value;
+
+        if (!username || username.length < 4) {
+          alert("아이디를 다시 확인해주세요.");
+          return;
+        }
+        if (!email.includes("@")) {
+          alert("이메일을 다시 확인해주세요.");
+          return;
+        }
+        if (password.length < 6) {
+          alert("비밀번호를 다시 확인해주세요.");
+          return;
+        }
+
+        console.log("폼 유효성 통과! 서버로 전송 가능합니다.");
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>[BASE] LCP 후보 이미지 지연 요청</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body{margin:0;font-family:system-ui,sans-serif}
+    .hero{min-height:100vh;display:grid;place-items:center;text-align:center;padding:24px}
+    .hero img{max-width:min(92vw, 1200px);width:100%;height:auto;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.15)}
+    .title{font-size:clamp(24px,6vw,42px);margin:16px 0 8px}
+    .sub{color:#64748b;margin:0 0 16px}
+    .next{padding:56px 24px;border-top:1px solid #e2e8f0}
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <div>
+      <!-- 문제: <img>를 파서가 만나는 시점에야 요청 시작 → 워터폴 하단에서 늦게 보임 -->
+      <img
+  src="https://picsum.photos/1600/900?random=1"
+        alt="히어로 이미지 (LCP 후보)">
+      <h1 class="title">느린 LCP를 고쳐보자</h1>
+      <p class="sub">이미지 요청이 늦게 시작되면 LCP가 밀립니다</p>
+    </div>
+  </section>
+
+  <section class="next" id="next">
+    <h2>다음 섹션</h2>
+    <p>여기서 무거운 번들을 사용합니다(지금 당장 필요 없음).</p>
+    <div id="next-placeholder" style="height:280px;display:grid;place-items:center;color:#64748b;border:1px dashed #cbd5e1;border-radius:8px;">
+      (스크롤 진입 시 기능 활성화)
+    </div>
+  </section>
+
+  <script>
+    // (선택) LCP 콘솔 로거
+    try{
+      new PerformanceObserver((list)=>{
+        const entry = list.getEntries().at(-1);
+        if(entry){ console.log('[BASE] LCP', Math.round(entry.startTime),'ms', entry); }
+      }).observe({type:'largest-contentful-paint', buffered:true});
+    }catch(e){}
+  </script>
+</body>
+</html>

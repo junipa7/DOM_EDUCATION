@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>이벤트 실습</title>
+  </head>
+  <body>
+    <div class="container">
+      <button id="addItem">할 일 추가</button>
+      <ul id="todoList"></ul>
+    </div>
+
+    <script>
+      const list = document.getElementById("todoList");
+      const addBtn = document.getElementById("addItem");
+
+      let count = 1;
+
+      // 1. 항목 추가 버튼 클릭 시 새로운 li 삽입
+      addBtn.addEventListener("click", () => {
+        const li = document.createElement("li");
+
+        li.innerHTML = `
+    <span class="text">할 일 ${count++}</span>
+    <button data-action="complete">완료</button>
+    <button data-action="delete">삭제</button>
+    <button data-action="important">⭐</button>
+  `;
+
+        list.appendChild(li);
+      });
+
+      // 2. 이벤트 위임 - ul에만 리스너 등록
+      list.addEventListener("click", (event) => {
+        const target = event.target;
+
+        // 버튼이 아닌 요소 클릭 시 무시
+        if (target.tagName !== "BUTTON") return;
+
+        const li = target.closest("li");
+        const action = target.dataset.action;
+
+        switch (action) {
+          case "complete":
+            li.classList.toggle("done");
+            break;
+
+          case "delete":
+            li.remove();
+            break;
+
+          case "important":
+            // 이미 중요 표시된 항목이면 다시 아래로 내림
+            if (li.classList.contains("important")) {
+              li.classList.remove("important");
+              list.appendChild(li); // 맨 뒤로 이동
+            } else {
+              li.classList.add("important");
+              list.insertBefore(li, list.firstElementChild); // 맨 위로 이동
+            }
+            break;
+        }
+      });
+
+      // 3. 스타일 적용
+      const style = document.createElement("style");
+      style.textContent = `
+  .done .text {
+    text-decoration: line-through;
+    color: gray;
+  }
+
+  .important {
+    background: #fffacd;
+  }
+
+  li {
+    padding: 8px;
+    border-bottom: 1px solid #ccc;
+  }
+
+  button {
+    margin-left: 6px;
+  }
+`;
+      document.head.appendChild(style);
+    </script>
+  </body>
+</html>

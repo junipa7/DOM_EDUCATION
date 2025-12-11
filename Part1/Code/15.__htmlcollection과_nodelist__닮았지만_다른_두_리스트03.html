@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <ul>
+      <li>철수</li>
+      <li>지민</li>
+      <li>영희</li>
+    </ul>
+
+    <script>
+      const list = document.getElementsByTagName("li");
+      for (let i = 0; i < list.length; i++) {
+        list[i].remove();
+      }
+
+      // 해결책 #1:
+      const items = Array.from(document.getElementsByTagName("li"));
+
+      items.forEach((li) => {
+        li.remove();
+      });
+
+      // 해결책 #2:
+      //   const list = document.getElementsByTagName("li");
+
+      //   for (let i = list.length - 1; i >= 0; i--) {
+      //     list[i].remove();
+      //   }
+    </script>
+  </body>
+</html>

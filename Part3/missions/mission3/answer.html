@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CLS 미션 - Fixed (Hardened)</title>
+
+    <!-- Google Fonts with display=swap -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --ad-height: 120px;
+      }
+
+      body {
+        font-family: "Roboto", system-ui, -apple-system, Segoe UI, sans-serif;
+        margin: 0;
+        padding: 24px;
+        line-height: 1.5;
+      }
+
+      .hud {
+        position: fixed;
+        top: 12px;
+        right: 12px;
+        background: #111;
+        color: #fff;
+        padding: 10px 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        z-index: 9999;
+      }
+
+      /* 상단 광고: 초기부터 자리 확보 */
+      .ad-wrap {
+        width: 100%;
+        height: var(--ad-height);
+        background: #fff6bf;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #222;
+        margin: -24px -24px 24px;
+      }
+      .ad-content {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .ad-content.ready {
+        opacity: 1;
+      }
+
+      /* 이미지 공간 예약 */
+      .hero-wrap {
+        width: 100%;
+      }
+      .hero-skeleton {
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        background: #e9e9e9;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+        font-size: 14px;
+      }
+      #hero {
+        width: 100%;
+        height: auto;
+        display: none;
+        border-radius: 8px;
+      }
+
+      .card {
+        margin-top: 16px;
+        padding: 12px;
+        background: #f3f3f3;
+        border-radius: 8px;
+      }
+
+      /* transform 애니메이션 */
+      .banner-box {
+        position: relative;
+        height: 60px;
+        margin-top: 24px;
+      }
+      .banner {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 120px;
+        height: 40px;
+        background: #4c6ef5;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        transition: transform 400ms ease;
+        will-change: transform;
+      }
+      .banner.move {
+        transform: translateX(260px);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hud">CLS: <span id="cls">0.000</span></div>
+
+    <!-- 광고 컨테이너 (초기부터 자리 확보) -->
+    <div class="ad-wrap">
+      <div class="ad-content" id="ad-content">로딩 중…</div>
+    </div>
+
+    <h1>레이아웃 셰프트 개선 페이지</h1>
+    <p>이미지, 광고, 애니메이션, 폰트 문제를 개선했습니다.</p>
+
+    <div class="hero-wrap">
+      <!-- skeleton 안에 안내 문구도 배치 (로드 지연 시 사용자 피드백) -->
+      <div class="hero-skeleton" id="hero-skeleton">이미지 로딩 중…</div>
+      <!-- width/height로 공간 명시 + referrerpolicy로 리퍼러 이슈 회피 -->
+      <img
+        id="hero"
+        alt="큰 이미지"
+        width="1200"
+        height="900"
+        referrerpolicy="no-referrer"
+        decoding="async"
+      />
+    </div>
+
+    <div class="card" id="card1">
+      이미지가 도착하기 전에도 공간이 예약되어 있어 아래 요소가 밀리지 않습니다.
+    </div>
+
+    <div class="banner-box">
+      <div class="banner" id="banner">BUY</div>
+    </div>
+
+    <script>
+      // CLS HUD
+      (function measureCLS() {
+        let clsValue = 0;
+        const clsEl = document.getElementById("cls");
+        if ("PerformanceObserver" in window) {
+          const po = new PerformanceObserver((list) => {
+            for (const entry of list.getEntries()) {
+              if (!entry.hadRecentInput) {
+                clsValue += entry.value;
+                clsEl.textContent = clsValue.toFixed(3);
+              }
+            }
+          });
+          try {
+            po.observe({ type: "layout-shift", buffered: true });
+          } catch (e) {}
+        }
+      })();
+
+      const hero = document.getElementById("hero");
+      const skeleton = document.getElementById("hero-skeleton");
+      const banner = document.getElementById("banner");
+      const adContent = document.getElementById("ad-content");
+
+      // 1차 기본 이미지 URL (Wikimedia)
+      const IMG_PRIMARY =
+        "https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.jpg";
+      // 2차 대체 URL (Picsum: 4:3 비율)
+      const IMG_FALLBACK = "https://picsum.photos/1200/900";
+
+      // 이미지 로드 성공 시 skeleton 교체
+      function showImage() {
+        hero.style.display = "block";
+        skeleton.style.display = "none";
+      }
+
+      // 이미지 로드 실패 시 대체 소스 시도
+      function handleImgError() {
+        if (hero.dataset.triedFallback === "1") {
+          // 최종 실패: skeleton에 안내 표시 유지
+          skeleton.textContent =
+            "이미지를 불러오지 못했습니다. 네트워크 상태를 확인하세요.";
+          return;
+        }
+        hero.dataset.triedFallback = "1";
+        hero.src = IMG_FALLBACK;
+      }
+
+      // 5초 내 로드/에러 콜백이 없으면 안내로 전환(네트워크 지연 대비)
+      const failSafeTimer = setTimeout(() => {
+        if (hero.style.display === "none") {
+          skeleton.textContent =
+            "네트워크가 느립니다. 잠시 후 다시 시도합니다…";
+        }
+      }, 5000);
+
+      // 이미지 로딩 시작 (자리 예약은 이미 되어 있음)
+      setTimeout(() => {
+        hero.onload = () => {
+          clearTimeout(failSafeTimer);
+          showImage();
+        };
+        hero.onerror = handleImgError;
+        hero.src = IMG_PRIMARY;
+      }, 600);
+
+      // 광고 내용 교체 (컨테이너는 이미 자리 확보 → 레이아웃 영향 없음)
+      setTimeout(() => {
+        adContent.textContent = "광고 영역 – 예약된 자리 안에서 내용 교체";
+        adContent.classList.add("ready");
+      }, 1000);
+
+      // transform 애니메이션 (레이아웃 비침범)
+      setTimeout(() => {
+        banner.classList.add("move");
+      }, 1400);
+    </script>
+  </body>
+</html>

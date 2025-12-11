@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <ul id="menu">
+      <li>Home</li>
+      <li>About</li>
+      <li>Contact</li>
+    </ul>
+
+    <script>
+      // menu.prepend(newItem);
+
+      const menu = document.getElementById("menu");
+      const fragment = document.createDocumentFragment();
+
+      for (let i = 0; i < 1000; i++) {
+        const li = document.createElement("li");
+        li.textContent = `Item ${i + 1}`;
+        fragment.appendChild(li);
+      }
+
+      menu.appendChild(fragment);
+    </script>
+  </body>
+</html>

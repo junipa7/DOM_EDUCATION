@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      <ul id="todo-list"></ul>
+      <button id="add-todo">할 일 추가</button>
+    </div>
+
+    <script>
+      const state = {
+        todos: [],
+      };
+
+      const list = document.getElementById("todo-list");
+      const button = document.getElementById("add-todo");
+
+      function render() {
+        list.innerHTML = "";
+
+        state.todos.forEach((item, index) => {
+          const li = document.createElement("li");
+          li.textContent = item.text;
+          if (item.done) {
+            li.style.textDecoration = "line-through";
+          }
+          li.dataset.index = index;
+          list.appendChild(li);
+        });
+      }
+
+      button.addEventListener("click", () => {
+        const newTodo = {
+          text: "새로운 할 일",
+          done: false,
+        };
+        state.todos.push(newTodo);
+        render();
+      });
+
+      list.addEventListener("click", (event) => {
+        const target = event.target;
+        const index = target.dataset.index;
+        if (typeof index !== "undefined") {
+          state.todos[index].done = !state.todos[index].done;
+          render();
+        }
+      });
+    </script>
+  </body>
+</html>

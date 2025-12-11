@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .completed {
+        color: red;
+        text-decoration: line-through;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="text" id="itemInput" placeholder="새 항목 입력" />
+    <button id="addBtn">추가</button>
+
+    <ul id="itemList">
+      <li>
+        <span class="item-text">Item 1</span>
+        <button data-action="complete">완료</button>
+        <button data-action="delete">삭제</button>
+      </li>
+      <li>
+        <span class="item-text">Item 2</span>
+        <button data-action="complete">완료</button>
+        <button data-action="delete">삭제</button>
+      </li>
+    </ul>
+
+    <script>
+      const itemList = document.getElementById("itemList");
+      const itemInput = document.getElementById("itemInput");
+      const addBtn = document.getElementById("addBtn");
+
+      let items = [{id: 0, text: "Item 1", done: false}, {id: 1, text: "Item 2", done: false }];
+      let idCounter = 2;
+      console.log(items);
+
+      addBtn.addEventListener("click", function () {
+        const text = itemInput.value.trim();
+        if (text === "") return;
+
+        const item = {
+          id: idCounter++,
+          text: text,
+          done: false,
+        };
+
+        items.push(item);
+        renderItem(item);
+        itemInput.value = "";
+      });
+
+      itemList.addEventListener("click", function (event) {
+        const action = event.target.dataset.action;
+        if (!action) return;
+
+        const listItem = event.target.closest("li");
+        const id = parseInt(listItem.dataset.id);
+        const item = items.find((i) => i.id === id);
+
+        if (action === "delete") {
+          items = items.filter((i) => i.id !== id);
+          listItem.remove();
+        }
+
+        if (action === "complete") {
+          item.done = !item.done;
+          const textEl = listItem.querySelector(".item-text");
+          textEl.classList.toggle("completed");
+        }
+        console.log(items[0].done);
+        console.log(items[3].done);
+
+      });
+
+      function renderItem(item) {
+        const li = document.createElement("li");
+        li.setAttribute("data-id", item.id);
+
+        li.innerHTML = `
+            <span class="item-text ${item.done ? "completed" : ""}">
+            ${item.text}
+            </span>
+            <button data-action="complete">완료</button>
+            <button data-action="delete">삭제</button>
+        `;
+
+        itemList.appendChild(li);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>FPS 성능 측정 실습</title>
+    <style>
+      .box {
+        width: 100px;
+        height: 100px;
+        background-color: lightblue;
+        margin: 100px auto;
+        transition: all 0.2s ease;
+      }
+
+      .active {
+        width: 300px;
+        height: 300px;
+        background-color: crimson;
+      }
+
+      button {
+        display: block;
+        margin: 20px auto;
+        font-size: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <button>애니메이션 실행</button>
+    <div class="box"></div>
+
+    <script>
+      const button = document.querySelector("button");
+      const box = document.querySelector(".box");
+
+      button.addEventListener("click", () => {
+        box.classList.toggle("active");
+      });
+    </script>
+  </body>
+</html>

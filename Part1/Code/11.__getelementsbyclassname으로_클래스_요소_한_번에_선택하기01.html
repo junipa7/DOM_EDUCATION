@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul>
+      <li class="menu-item">홈</li>
+      <li class="menu-item">소개</li>
+      <li class="menu-item">문의</li>
+    </ul>
+
+    <script>
+      const menuItems = document.getElementsByClassName("menu-item");
+
+      console.log(menuItems.length); // 3
+      console.log(menuItems[0].innerText); // "홈"
+
+      for (let i = 0; i < menuItems.length; i++) {
+        menuItems[i].style.color = "red";
+      }
+    </script>
+  </body>
+</html>

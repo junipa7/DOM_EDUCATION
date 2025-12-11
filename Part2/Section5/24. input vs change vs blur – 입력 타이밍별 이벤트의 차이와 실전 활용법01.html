@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input type="password" id="password" placeholder="비밀번호 입력" />
+    <p id="length-info">0자 입력됨</p>
+
+    <script>
+      const input = document.getElementById("password");
+      const info = document.getElementById("length-info");
+
+      input.addEventListener("input", function () {
+        info.textContent = `${input.value.length}자 입력됨`;
+      });
+    </script>
+  </body>
+</html>

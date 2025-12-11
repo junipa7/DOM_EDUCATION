@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <ul id="list">
+      <li>Apple</li>
+      <li>Banana</li>
+    </ul>
+
+    <script>
+      const list = document.getElementById("list");
+
+      console.log(list.children); // HTMLCollection(2) [li, li]
+      console.log(list.childNodes); // NodeList(5) [text, li, text, li, text]
+
+      //     ul
+      // ├── #text           ← 줄바꿈 문자
+      // ├── li "Apple"      ← 첫 번째 항목
+      // ├── #text           ← 줄바꿈 문자
+      // ├── li "Banana"     ← 두 번째 항목
+      // └── #text           ← 마지막 줄바꿈
+    </script>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <p id="counter">0</p>
+      <button id="increment">+1</button>
+    </div>
+
+    <script>
+
+      const state = {
+        count: 0,
+      };
+
+      const proxyState = new Proxy(state, {
+        get(target, prop) {
+          console.log(`${prop} 값이 읽혔습니다.`);
+          return target[prop];
+        },
+        set(target, prop, value) {
+          console.log(`${prop} 값이 ${value}로 변경되었습니다.`);
+          target[prop] = value;
+          return true;
+        },
+      });
+
+      const display = document.getElementById("counter");
+      const button = document.getElementById("increment");
+
+      button.addEventListener("click", () => {
+        proxyState.count += 1;
+        display.textContent = proxyState.count;
+      });
+    </script>
+  </body>
+</html>

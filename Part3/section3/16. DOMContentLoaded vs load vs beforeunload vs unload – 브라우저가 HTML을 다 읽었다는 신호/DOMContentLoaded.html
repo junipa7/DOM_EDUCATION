@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>DOMContentLoaded vs Load</title>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        console.log("🚀 DOMContentLoaded - HTML 파싱 완료!");
+      });
+
+      window.addEventListener("load", () => {
+        console.log("🌎 load - 모든 리소스 로딩 완료!");
+      });
+
+      window.addEventListener("beforeunload", (event) => {
+        alert("변경 사항이 저장되지 않았습니다. 정말로 떠나시겠습니까?");
+        if (hasUnsavedChanges()) {
+          event.preventDefault();
+          event.returnValue = ""; // 최신 브라우저에서는 이 값은 무시되며, 단순히 경고창 표시 여부만 결정합니다.
+        }
+      });      
+    </script>
+  </head>
+  <body>
+    <h1>브라우저 이벤트 실험</h1>
+    <img src="https://www.samsungsem.com/files/imageView.do?key=1dd12dbc-adbc-4e8f-bef0-d553777dabc6" />
+  </body>
+</html>

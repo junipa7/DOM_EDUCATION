@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      input.invalid {
+        border: 2px solid red;
+        background-color: #ffeaea;
+      }
+
+      input.valid {
+        border: 2px solid green;
+        background-color: #eaffea;
+      }
+
+      .error-message {
+        color: red;
+        font-size: 0.9em;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="signup-form">
+      <label>
+        아이디
+        <input type="text" name="username" />
+        <span class="error-message"></span>
+      </label>
+      <label>
+        이메일
+        <input type="email" name="email" />
+        <span class="error-message"></span>
+      </label>
+      <label>
+        비밀번호
+        <input type="password" name="password" />
+        <span class="error-message"></span>
+      </label>
+      <button type="submit">회원가입</button>
+    </form>
+
+    <script>
+      const form = document.getElementById("signup-form");
+
+      form.username.addEventListener("blur", function (event) {
+        const input = event.target;
+        const value = input.value.trim();
+        const message = input.nextElementSibling;
+
+        if (!value || value.length < 4) {
+          input.classList.add("invalid");
+          input.classList.remove("valid");
+          message.textContent = "아이디는 4자 이상이어야 합니다.";
+        } else {
+          input.classList.remove("invalid");
+          input.classList.add("valid");
+          message.textContent = "";
+        }
+      });
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const allInputs = form.querySelectorAll("input");
+        let allValid = true;
+
+        allInputs.forEach((input) => {
+          if (!input.classList.contains("valid")) {
+            input.classList.add("invalid");
+            allValid = false;
+          }
+        });
+
+        if (!allValid) {
+          alert("모든 입력을 올바르게 작성해주세요.");
+          return;
+        }
+
+        console.log("모든 필드 유효성 검사 통과. 서버 전송 가능.");
+      });
+    </script>
+  </body>
+</html>

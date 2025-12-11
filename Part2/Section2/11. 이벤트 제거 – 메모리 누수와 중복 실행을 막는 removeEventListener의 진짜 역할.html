@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button>클릭</button>    
+    <button>클릭</button>    
+    <script>
+      const button1 = document.querySelector("button");
+
+      function handleClick() {
+        alert("클릭됨!");
+      }
+
+      button1.addEventListener("click", handleClick);
+
+      // 나중에 필요 없어졌을 때 제거합니다.
+      button1.removeEventListener("click", handleClick);
+
+      // ---------------------
+
+      // 이렇게 등록하면 -- Callback함수로서는 정확한 위치비교가 안되기 때문에 반드시 외부정의 Function을 사용해야 합니다.
+      button1.addEventListener("click", function () {
+        alert("클릭됨!");
+      });
+
+      // 이렇게는 제거할 수 없습니다!
+      button1.removeEventListener("click", function () {
+        alert("클릭됨!");
+      });
+
+      // ---------------------
+      const element = document.querySelector("button");
+
+      const handleHover = () => {
+        console.log("마우스가 올라갔습니다.");
+      };
+
+      element.addEventListener("mouseenter", handleHover);
+
+      // 나중에 필요 없을 때
+      element.removeEventListener("mouseenter", handleHover);
+
+      // --------------------- 
+      function attachButton() {
+        const button = document.createElement("button");
+        button.textContent = "Click me";
+        document.body.appendChild(button);
+
+        button.addEventListener("click", () => {
+          console.log("클릭됨");
+        });
+
+        // 요소는 DOM에서 제거
+        document.body.removeChild(button);
+      }
+
+      // --------------------------
+      function attachTooltip() {
+        element.addEventListener("mouseenter", showTooltip);
+        element.addEventListener("mouseleave", hideTooltip);
+      }
+
+      function detachTooltip() {
+        element.removeEventListener("mouseenter", showTooltip);
+        element.removeEventListener("mouseleave", hideTooltip);
+      }
+
+      // --------------------------
+      button1.addEventListener("click", handleClick, { once: true });
+    </script>
+  </body>
+</html>

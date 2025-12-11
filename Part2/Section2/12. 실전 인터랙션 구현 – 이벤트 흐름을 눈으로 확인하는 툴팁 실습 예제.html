@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="product" style="position: relative">
+      <img src="product.jpg" id="productImage" />
+    </div>
+
+    <script>
+      const productImage = document.getElementById("productImage");
+
+      function showTooltip(event) {
+        if (document.querySelector(".tooltip")) return; // 이미 있으면 생략
+
+        const tooltip = document.createElement("div");
+        tooltip.textContent = "무료 배송!";
+        tooltip.style.position = "absolute";
+        tooltip.style.top = event.offsetY + 10 + "px";
+        tooltip.style.left = event.offsetX + 10 + "px";
+        tooltip.style.background = "black";
+        tooltip.style.color = "white";
+        tooltip.style.padding = "5px";
+        tooltip.style.borderRadius = "4px";
+        tooltip.classList.add("tooltip");
+        productImage.parentElement.appendChild(tooltip);
+      }
+
+      function hideTooltip() {
+        const tooltip = document.querySelector(".tooltip");
+        if (tooltip) {
+          tooltip.remove();
+        }
+      }
+
+      productImage.addEventListener("mouseenter", showTooltip);
+      productImage.addEventListener("mouseleave", hideTooltip);
+    </script>
+  </body>
+</html>

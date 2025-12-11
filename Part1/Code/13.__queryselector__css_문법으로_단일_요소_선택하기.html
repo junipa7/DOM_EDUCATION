@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="main">
+      <p>메인 영역입니다.</p>
+    </div>
+
+    <h1>DOM 완전 정복</h1>
+    <h1>또 다른 제목</h1>
+
+    <div id="container">
+      <p class="highlighted">강조된 텍스트</p>
+      <p>일반 텍스트</p>
+    </div>
+
+    <div id="menu">
+      <a href="#">첫 번째 링크</a>
+      <a href="#">두 번째 링크</a>
+    </div>
+
+    <button class="btn">제출</button>
+
+    <script>
+      const mainSection = document.querySelector("#main");
+      const button = document.querySelector(".btn");
+      const title = document.querySelector("h1");
+      const item = document.querySelector("#container .highlighted");
+      const section = document.getElementById("menu");
+      const firstLink = section.querySelector("a");
+
+      console.dir(document.querySelector(".btn"));
+      const result = document.querySelector(".something");
+      if (result !== null) {
+        result.style.color = "blue";
+      }
+    </script>
+  </body>
+</html>

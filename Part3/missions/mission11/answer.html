@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>[ANSWER] 매거진 랜딩 - LCP/FCP 최적화</title>
+
+  <!-- 웹폰트 Preload -->
+  <link rel="preload"
+        as="font"
+        href="https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxM.woff2"
+        type="font/woff2"
+        crossorigin="anonymous">
+
+  <style>
+    @font-face{
+      font-family:"MyRoboto";
+      src:url("https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxM.woff2") format("woff2");
+      font-display:swap;
+    }
+
+    body{margin:0;font-family:"MyRoboto", system-ui, -apple-system, Segoe UI, Noto Sans, sans-serif;line-height:1.6;background:#fafafa;color:#222}
+    header{padding:24px 16px;border-bottom:1px solid #ddd;font-weight:bold;font-size:22px;background:#fff;position:sticky;top:0;z-index:10}
+    .hero{max-width:1100px;margin:40px auto;padding:0 16px;text-align:center}
+    .hero h1{font-size:48px;margin:16px 0}
+    .hero img{width:100%;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,.08)}
+    .muted{color:#666}
+    .grid{max-width:1100px;margin:40px auto;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+    .card img{width:100%;border-radius:12px;opacity:.001;transition:opacity .4s ease, transform .4s ease}
+    .card img.loaded{opacity:1;transform:scale(1.02)}
+    .media{max-width:1100px;margin:60px auto;padding:0 16px}
+    .video-shell{position:relative}
+    video{width:100%;border-radius:16px;background:#000}
+    .play-overlay{
+      position:absolute;inset:0;display:grid;place-items:center;
+      background:rgba(0,0,0,.35);color:#fff;font-size:22px;
+      border:0;cursor:pointer;border-radius:16px;backdrop-filter:blur(2px)
+    }
+  </style>
+</head>
+<body>
+  <header>매거진 <span class="muted">/ Weekly</span></header>
+
+  <main class="hero">
+    <h1>도시의 주말 산책 코스</h1>
+    <!-- LCP 후보: 즉시 로드 + 크기 지정 -->
+    <img src="https://picsum.photos/id/1015/1200/700" width="1200" height="700" alt="hero">
+    <p class="muted">사진과 이야기가 있는 주말, 도시 속 자연을 걸어요.</p>
+  </main>
+
+  <!-- 썸네일: 지연 로드 -->
+  <section class="grid" id="thumbs">
+    <article class="card"><img data-src="https://picsum.photos/id/1025/600/400" width="600" height="400" alt=""></article>
+    <article class="card"><img data-src="https://picsum.photos/id/1035/600/400" width="600" height="400" alt=""></article>
+    <article class="card"><img data-src="https://picsum.photos/id/1045/600/400" width="600" height="400" alt=""></article>
+    <article class="card"><img data-src="https://picsum.photos/id/1055/600/400" width="600" height="400" alt=""></article>
+    <article class="card"><img data-src="https://picsum.photos/id/1065/600/400" width="600" height="400" alt=""></article>
+    <article class="card"><img data-src="https://picsum.photos/id/1075/600/400" width="600" height="400" alt=""></article>
+  </section>
+
+  <!-- Video: 지연 로드 + poster -->
+  <section class="media" id="video-section">
+    <h2>도심 산책 브이로그</h2>
+    <div class="video-shell">
+      <video id="vlog" controls preload="none" playsinline poster="https://images.unsplash.com/photo-1520975922215-230f3cd8a487?w=1280&q=80&auto=format&fit=crop">
+        <source data-src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm" type="video/webm">
+        <source data-src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+      </video>
+      <button class="play-overlay" aria-label="재생">▶ 동영상 보기</button>
+    </div>
+  </section>
+
+  <script>
+    // 이미지 Lazy Loading
+    const imgIO = new IntersectionObserver((entries, obs)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          const img = e.target;
+          const src = img.getAttribute('data-src');
+          if(src){
+            img.src = src;
+            img.onload = ()=> img.classList.add('loaded');
+          }
+          obs.unobserve(img);
+        }
+      });
+    }, { rootMargin:'200px 0px' });
+    document.querySelectorAll('#thumbs img[data-src]').forEach(img => imgIO.observe(img));
+
+    // Video Lazy Loading
+    const video = document.getElementById('vlog');
+    const shell = document.querySelector('.video-shell');
+    const playBtn = shell.querySelector('.play-overlay');
+    let videoPrepared = false;
+    const videoIO = new IntersectionObserver((entries, obs)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting && !videoPrepared){
+          video.querySelectorAll('source[data-src]').forEach(s=>{
+            s.setAttribute('src', s.getAttribute('data-src'));
+            s.removeAttribute('data-src');
+          });
+          video.load();
+          videoPrepared = true;
+          obs.unobserve(video);
+        }
+      });
+    }, { rootMargin:'400px 0px' });
+    videoIO.observe(video);
+
+    playBtn.addEventListener('click', async ()=>{
+      playBtn.style.display='none';
+      try { await video.play(); }
+      catch(e){ playBtn.style.display='grid'; alert('재생 버튼을 다시 눌러 주세요.'); }
+    });
+  </script>
+</body>
+</html>

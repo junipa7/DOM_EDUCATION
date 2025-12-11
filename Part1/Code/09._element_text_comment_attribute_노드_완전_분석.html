@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="box">
+      Hello <span>World</span
+      ><!-- 주석입니다 -->
+    </div>
+
+    <script>
+      const div = document.getElementById("box");
+
+      console.log(div.nodeType); // 1: Element
+      console.log(div.childNodes); // NodeList(3) [Text, span, Comment]
+      console.log(div.childNodes[0].nodeType); // 3: Text
+      console.log(div.childNodes[1].nodeType); // 1: Element
+      console.log(div.childNodes[2].nodeType); // 8: Comment
+
+      console.log(div.attributes); // NamedNodeMap {0: id, id: "box", length: 1}
+      console.log(div.attributes[0].name); // "id"
+      console.log(div.attributes[0].value); // "box"
+
+      //   Element Node: <div id="box">
+      //   ├── Text Node: "Hello "
+      //   ├── Element Node: <span>
+      //   │   └── Text Node: "World"
+      //   └── Comment Node: " 주석입니다 "
+
+      div.getAttribute("id"); // "box"
+      div.setAttribute("id", "newBox");
+
+      const box = document.getElementById("box");
+      console.log(box.childNodes); // [Text, span, Comment]
+      console.log(box.attributes); // NamedNodeMap {0: id, id: "box"}
+      console.log(box.getAttribute("id")); // "box"
+    </script>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="grandparent" style="padding: 20px; background-color: lightcoral">
+      Grandparent
+      <div id="parent" style="padding: 20px; background-color: lightseagreen">
+        Parent
+        <button id="child">Child</button>
+        <button id="childStop">Stop</button>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById("grandparent").addEventListener("click", function () {
+          console.log("Grandparent clicked (capturing)");
+        },
+        { capture: true }
+      );
+
+      document.getElementById("grandparent").addEventListener("click", function () {
+            console.log("Grandparent clicked (bubbling)");
+      });
+
+      document.getElementById("parent").addEventListener("click", function () {
+          console.log("parent clicked (capturing)");
+        },
+        { capture: true }
+      );
+
+      document.getElementById("parent").addEventListener("click", function () {
+            console.log("parent clicked (bubbling)");
+      });
+
+      document.getElementById("child").addEventListener("click", function (e) {
+          console.log("Child clicked");
+          //e.stopPropagation();
+      });
+
+      document.getElementById("childStop").addEventListener("click", function (e) {
+          console.log("Child clicked");
+          e.stopPropagation();
+      });
+
+      //  console.log("----------------------------END------------------------");
+
+    </script>
+  </body>
+</html>

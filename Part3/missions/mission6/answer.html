@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>장바구니 (최적화된 UI)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+      /* ========== Base & Motion Preferences ========== */
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", Roboto, system-ui, -apple-system, sans-serif;
+        margin: 0;
+        background: #f3f4f6;
+        color: #111827;
+      }
+      /* 사용자 모션 감소 설정 존중: 애니메이션 최소화 */
+      @media (prefers-reduced-motion: reduce) {
+        .card:hover {
+          transform: none;
+        }
+        .btn {
+          transition: none;
+        }
+      }
+
+      /* ========== Header ========== */
+      header {
+        background: linear-gradient(90deg, #2563eb, #1d4ed8);
+        color: #fff;
+        padding: 16px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 20px;
+      }
+
+      /* ========== Layout: 2-Column with Sticky Aside ========== */
+      main {
+        max-width: 1120px;
+        margin: 24px auto;
+        padding: 0 16px;
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+      }
+
+      /* ========== Cart List Card ========== */
+      .card {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        /* transform만 사용 → 페인트보다 저렴(가능하면 합성 단계 처리) */
+        transition: transform 0.15s ease;
+      }
+      .card:hover {
+        transform: translateY(-2px);
+      }
+      .thumb {
+        /* 크기 예약 + cover → CLS 방지 */
+        width: 120px;
+        height: 90px;
+        aspect-ratio: 4/3;
+        border-radius: 8px;
+        object-fit: cover;
+        flex: 0 0 auto;
+      }
+      .info {
+        flex: 1;
+        min-width: 0;
+      }
+      .info h4 {
+        margin: 0 0 6px;
+        font-size: 16px;
+      }
+      .info p {
+        margin: 0 0 8px;
+        color: #374151;
+        font-weight: 600;
+      }
+      .qty {
+        font-size: 14px;
+        color: #4b5563;
+      }
+      .qty input {
+        width: 64px;
+        padding: 6px 8px;
+        margin-left: 6px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+
+      /* ========== Aside (Order Summary) ========== */
+      aside {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        height: fit-content;
+        position: sticky;
+        top: 84px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      aside h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+      }
+      .summary {
+        border-top: 1px solid #e5e7eb;
+        padding-top: 12px;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        margin: 8px 0;
+        color: #374151;
+      }
+      .row strong {
+        color: #111827;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+      }
+      .actions input[type="text"] {
+        flex: 1;
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+
+      /* ========== Buttons ========== */
+      .btn {
+        padding: 10px 14px;
+        border: 0;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 15px;
+        transition: transform 0.06s ease, background 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .btn:active {
+        transform: translateY(1px);
+      }
+      .btn.primary {
+        background: #2563eb;
+        color: #fff;
+      }
+      .btn.primary:hover {
+        background: #1d4ed8;
+      }
+      .btn.outline {
+        background: #fff;
+        color: #111827;
+        border: 1px solid #d1d5db;
+      }
+      .btn.outline:hover {
+        background: #f3f4f6;
+      }
+      .btn.loading {
+        opacity: 0.6;
+        pointer-events: none;
+      } /* 시각적/마우스 차단 */
+
+      /* ========== Misc ========== */
+      #cart-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        border-radius: 999px;
+        font-size: 12px;
+        margin-left: 8px;
+      }
+
+      /* 모바일: 1열 전환, sticky 해제 */
+      @media (max-width: 900px) {
+        main {
+          grid-template-columns: 1fr;
+        }
+        aside {
+          position: static;
+          top: auto;
+        }
+      }
+
+      /* 접근성: 스크린리더 전용 영역 */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      /* (옵션) 오프스크린 비용 절감: 초기 레이아웃 예측치 제공 */
+      @supports (content-visibility: auto) {
+        .card {
+          content-visibility: auto;
+          contain-intrinsic-size: 150px 360px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">🛒 MyShop <span class="badge">Cart</span></div>
+      <nav class="nav">고객센터 | 로그인</nav>
+    </header>
+
+    <main>
+      <!-- 왼쪽: 장바구니 리스트 -->
+      <section id="cart-list" aria-label="장바구니 항목 목록"></section>
+
+      <!-- 오른쪽: 주문 요약 -->
+      <aside aria-labelledby="order-summary-title" aria-busy="false">
+        <h3 id="order-summary-title">주문 요약</h3>
+
+        <!-- 가격 정보는 라이브 영역으로 즉시 읽어주기 -->
+        <div class="summary" aria-live="polite">
+          <div class="row">
+            <span>상품 합계</span><span id="subtotal">₩0</span>
+          </div>
+          <div class="row">
+            <span>할인</span><span id="discount">- ₩0</span>
+          </div>
+          <div class="row">
+            <strong>총 결제 금액</strong><strong id="total">₩0</strong>
+          </div>
+        </div>
+
+        <div class="actions">
+          <input
+            type="text"
+            id="coupon"
+            placeholder="할인 코드 입력 (예: SAVE10)"
+            aria-label="할인 코드 입력"
+          />
+          <button
+            class="btn outline"
+            id="btn-coupon"
+            aria-label="할인 코드 적용"
+            aria-disabled="false"
+          >
+            적용
+          </button>
+        </div>
+        <button
+          class="btn primary"
+          id="btn-pay"
+          aria-label="결제하기"
+          aria-disabled="false"
+        >
+          결제하기
+        </button>
+
+        <!-- 비차단 상태 알림 -->
+        <div id="toast" class="sr-only" aria-live="polite"></div>
+      </aside>
+    </main>
+
+    <script>
+      /* ================= Utilities ================= */
+      const fmt = new Intl.NumberFormat("ko-KR", {
+        style: "currency",
+        currency: "KRW",
+        maximumFractionDigits: 0,
+      });
+      const $ = (s) => document.querySelector(s);
+      const $$ = (s) => document.querySelectorAll(s);
+
+      // 입력 과발화 방지: 입력이 멈춘 뒤 Nms 후 실행
+      const debounce = (fn, d = 120) => {
+        let t;
+        return (...args) => {
+          clearTimeout(t);
+          t = setTimeout(() => fn(...args), d);
+        };
+      };
+
+      // 안전한 정수 변환 + 범위 보정(최소 1, 최대 99)
+      const safeInt = (v, { min = 1, max = 99 } = {}) => {
+        let n = parseInt(v, 10);
+        if (Number.isNaN(n)) n = min;
+        return Math.max(min, Math.min(max, n));
+      };
+
+      // 비차단 토스트: alert 대체. SR에 즉시 읽힘.
+      function toast(msg) {
+        const t = $("#toast");
+        t.classList.remove("sr-only");
+        t.textContent = msg;
+        setTimeout(() => {
+          t.classList.add("sr-only");
+          t.textContent = "";
+        }, 1500);
+      }
+
+      // 공통 로딩 상태 토글: 시각·키보드·SR 모두 반영
+      function setLoading(button, text) {
+        button.classList.add("loading");
+        button.disabled = true;
+        button.setAttribute("aria-disabled", "true");
+        const prev = button.textContent;
+        button.textContent = text;
+        return () => {
+          button.classList.remove("loading");
+          button.disabled = false;
+          button.setAttribute("aria-disabled", "false");
+          button.textContent = prev;
+        };
+      }
+
+      /* ================= Data & Nodes ================= */
+      const ITEMS_COUNT = 50;
+      const cartList = $("#cart-list");
+      const subtotalEl = $("#subtotal");
+      const discountEl = $("#discount");
+      const totalEl = $("#total");
+      const couponInput = $("#coupon");
+      const couponBtn = $("#btn-coupon");
+      const payBtn = $("#btn-pay");
+
+      let subtotal = 0,
+        discount = 0,
+        appliedCoupon = null;
+
+      /* ========== Render Items (lazy + 크기예약 + 응답해상도 + 캐시 고려) ========== */
+      for (let i = 1; i <= ITEMS_COUNT; i++) {
+        const price = i * 3000;
+        const card = document.createElement("article");
+        card.className = "card";
+        card.innerHTML = `
+        <img class="thumb"
+             loading="lazy" decoding="async" fetchpriority="low"
+             src="https://picsum.photos/200/150"
+             srcset="https://picsum.photos/240/180 240w, https://picsum.photos/480/360 480w, https://picsum.photos/720/540 720w"
+             sizes="(max-width: 900px) 33vw, 120px"
+             width="120" height="90" alt="상품 ${i} 이미지">
+        <div class="info">
+          <h4>상품 ${i}</h4>
+          <p data-price="${price}">${fmt.format(price)}</p>
+          <label class="qty">수량:
+            <input type="number" inputmode="numeric" pattern="[0-9]*"
+                   min="1" value="1" aria-label="상품 ${i} 수량" data-price="${price}">
+          </label>
+        </div>`;
+        cartList.appendChild(card);
+
+        /* (옵션) 첫 카드(above-the-fold)만 fetchpriority="high"로 승격
+      if(i===1){
+        const img = card.querySelector('img');
+        img.setAttribute('fetchpriority','high'); // LCP 후보 빠른 확보
+      }
+      */
+      }
+
+      /* ================= Totals ================= */
+      function recalcTotals() {
+        let sum = 0;
+        $$('#cart-list input[type="number"]').forEach((inp) => {
+          const price = Number(inp.dataset.price || 0);
+          const qty = safeInt(inp.value, { min: 1, max: 99 });
+          sum += price * qty;
+        });
+        subtotal = sum;
+
+        // 간단 쿠폰 룰: SAVE10 → 10% (최대 50,000)
+        discount = 0;
+        if (appliedCoupon === "SAVE10") {
+          discount = Math.min(Math.round(subtotal * 0.1), 50000);
+        }
+
+        subtotalEl.textContent = fmt.format(subtotal);
+        discountEl.textContent = `- ${fmt.format(discount)}`;
+        totalEl.textContent = fmt.format(Math.max(0, subtotal - discount));
+      }
+      recalcTotals(); // 초기 1회만 정확 계산(중복 누적 제거)
+
+      /* ========== Quantity Change (부분 업데이트 + 디바운스) ========== */
+      const onQtyInput = debounce((e) => {
+        const el = e.target;
+        if (el.matches('input[type="number"]')) {
+          el.value = safeInt(el.value, { min: 1, max: 99 }); // 빈값·음수·과대값 보정
+          recalcTotals(); // 합계만 갱신 → 페인트 범위 축소
+        }
+      }, 120);
+      cartList.addEventListener("input", onQtyInput);
+
+      /* ========== Coupon (즉시 피드백 + 비동기 + 토스트) ========== */
+      couponBtn.addEventListener("click", () => {
+        if (couponBtn.disabled) return;
+
+        const restore = setLoading(couponBtn, "검증 중…");
+        const code = (couponInput.value || "").trim().toUpperCase();
+
+        // 서버 대기 시뮬레이션
+        setTimeout(() => {
+          if (code === "SAVE10") {
+            appliedCoupon = "SAVE10";
+            toast("10% 할인 코드 적용 (최대 50,000원)");
+          } else if (!code) {
+            appliedCoupon = null;
+            toast("할인 코드가 비어 있습니다.");
+          } else {
+            appliedCoupon = null;
+            toast("유효하지 않은 할인 코드입니다.");
+          }
+          recalcTotals();
+          restore();
+        }, 300);
+      });
+
+      /* ========== Pay (즉시 반응 + 비동기) ========== */
+      payBtn.addEventListener("click", () => {
+        if (payBtn.disabled) return;
+
+        const restore = setLoading(payBtn, "결제 처리 중…");
+        // 결제 API 대기 시뮬레이션
+        setTimeout(() => {
+          toast("결제가 완료되었습니다!");
+          restore();
+        }, 600);
+      });
+    </script>
+  </body>
+</html>

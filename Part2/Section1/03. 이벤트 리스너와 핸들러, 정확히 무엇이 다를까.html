@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button>한국</button>
+    <button>미국</button>
+    <button>일본</button>
+
+    <script>
+      // handleClick Function이 중복되는 경우 마지막에 정의된 Function만 실행됨.
+      // --------------첫번째 예제-------------------------
+
+      const button = document.querySelector("button");
+
+      function alertClick() {
+        alert("버튼 클릭 경고!");
+      }
+
+      button.addEventListener("click", alertClick);
+
+      // --------------두번째 예제-------------------------
+      // 실행이 안되는 예제
+
+      // function registerEvents() {
+      //   button.addEventListener("click", handleClick);
+      // }
+
+      // function handleClick() {
+      //   // 클릭 시의 행동 정의
+      //   console.log("펑션 실행이 안됨 - 버튼이 클릭됨");
+      // }
+
+      // --------------세번째 예제-------------------------
+
+      const buttons = document.querySelectorAll("button");
+
+      function handleClick(event) {
+        console.log(event.target.textContent + " 버튼이 클릭됨(event)");
+      }
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", handleClick);
+      });
+    </script>
+  </body>
+</html>

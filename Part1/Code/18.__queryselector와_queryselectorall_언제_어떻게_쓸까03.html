@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <ul>
+      <li class="product"><span class="name">에어팟</span></li>
+      <li class="product"><span class="name">갤럭시버즈</span></li>
+      <li class="product"><span class="name">헤드폰</span></li>
+    </ul>
+
+    <script>
+      const products = document.querySelectorAll(".product .name");
+      products.forEach((p) => console.log(p.textContent));
+    </script>
+  </body>
+</html>

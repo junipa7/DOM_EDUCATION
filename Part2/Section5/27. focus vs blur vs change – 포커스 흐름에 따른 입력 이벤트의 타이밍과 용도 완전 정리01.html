@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form id="example-form">
+      <input type="text" name="nickname" placeholder="닉네임을 입력하세요" />
+    </form>
+
+    <script>
+      const input = document.querySelector("input");
+
+      input.addEventListener("focus", function () {
+        console.log("focus: 입력 필드에 포커스가 잡혔습니다.");
+      });
+
+      input.addEventListener("blur", function () {
+        console.log("blur: 입력 필드에서 포커스가 빠졌습니다.");
+      });
+
+      input.addEventListener("change", function () {
+        console.log("change: 값이 변경되어 확정되었습니다.");
+      });
+    </script>
+  </body>
+</html>

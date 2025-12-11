@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form id="login-form">
+      <input type="text" name="username" placeholder="아이디" />
+      <input type="password" name="password" placeholder="비밀번호" />
+      <button type="submit" disabled>로그인</button>
+    </form>
+
+    <script>
+      const form = document.getElementById("login-form");
+      const usernameInput = form.username;
+      const passwordInput = form.password;
+      const submitButton = form.querySelector("button");
+
+      function checkInputs() {
+        const isUsernameFilled = usernameInput.value.trim() !== "";
+        const isPasswordFilled = passwordInput.value.trim() !== "";
+
+        if (isUsernameFilled && isPasswordFilled) {
+          submitButton.disabled = false;
+        } else {
+          submitButton.disabled = true;
+        }
+      }
+
+      usernameInput.addEventListener("input", checkInputs);
+      passwordInput.addEventListener("input", checkInputs);
+    </script>
+  </body>
+</html>

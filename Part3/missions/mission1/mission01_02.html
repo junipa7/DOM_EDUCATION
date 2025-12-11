@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Mission 10-1 – 정답</title>
+  <style>
+    /* 전역 규칙(남기되, 이후에 더 구체적인 규칙으로 덮어씀) */
+    h1 { color:#000; font-size:28px; }
+    p { color:#666; font-size:14px; line-height:1.4; }
+    /* ✅ 시안 준수: 더 구체적인 선택자로 덮어쓰기 */
+    .landing > h1 {
+      color: #1e3a8a; /* 남색 */
+      font-size: 32px; /* 32px */
+      font-weight: 700; /* bold */
+      margin: 0 0 16px 0; /* 아래 여백 16px (UA 기본 여백 무시/정의) */
+      line-height: 1.25; /* 가독성(선택) */
+    }
+  </style>
+</head>
+<body>
+  <main class = "landing">
+    <h1>서비스 오픈 예정</h1>
+    <p>시안과 다르게 보이는 스타일을 DevTools로 분석하세요.</p>
+  </main>
+</body>
+</html>

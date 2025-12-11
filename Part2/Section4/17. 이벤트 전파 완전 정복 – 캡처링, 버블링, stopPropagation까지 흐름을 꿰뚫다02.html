@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="outer" style="padding: 20px; background: lightblue">
+      Outer
+      <div id="inner" style="padding: 20px; background: lightgreen">
+        Inner
+        <button id="btn">Click me</button>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById("outer").addEventListener(
+        "click",
+        function () {
+          console.log("Outer clicked (capture)");
+        },
+        { capture: true }
+      );
+
+      document.getElementById("inner").addEventListener(
+        "click",
+        function () {
+          console.log("Inner clicked (capture)");
+        },
+        { capture: true }
+      );
+
+      document
+        .getElementById("btn")
+        .addEventListener("click", function (event) {
+          console.log("Button clicked");
+          event.stopPropagation();
+        });
+
+
+    </script>
+  </body>
+</html>

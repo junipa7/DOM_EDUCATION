@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button onclick="alert('클릭되었습니다')">버튼</button>
+
+    <script>
+      const button = document.querySelector("button");
+      button.onclick = function () {
+        alert("클릭됨"); // 실행 않됨
+      };
+
+      const button1 = document.querySelector("button");
+
+      button1.onclick = () => alert("1. 첫 번째 핸들러"); // 실행 않됨 onclick은 마지막에만 발생
+      button1.onclick = () => alert("1. 두 번째 핸들러"); // 이게 실행됨
+
+      // -----------------
+      const button2 = document.querySelector("button");
+
+      button2.addEventListener("click", () => {
+        alert("2. 첫 번째 핸들러"); // 두번째 실행됨
+      });
+
+      button2.addEventListener("click", () => {
+        alert("2. 두 번째 핸들러"); // 세번째 실행됨
+      });
+
+    </script>
+  </body>
+</html>

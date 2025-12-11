@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form id="join-form">
+      <input
+        type="text"
+        name="nickname"
+        placeholder="닉네임"
+        required
+        minlength="2"
+      />
+      <input type="email" name="email" placeholder="이메일" required />
+      <input
+        type="password"
+        name="password"
+        placeholder="비밀번호"
+        required
+        pattern=".{6,}"
+      />
+      <button type="submit">가입하기</button>
+    </form>
+
+    <script>
+      const form = document.getElementById("join-form");
+      const passwordInput = form.password;
+
+      form.addEventListener("submit", function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          console.log("기본 유효성 검사에 통과하지 못했습니다.");
+        }
+      });
+
+      passwordInput.addEventListener("input", function () {
+        if (passwordInput.value.length < 6) {
+          passwordInput.setCustomValidity(
+            ${passwordInput.name}"비밀번호는 6글자 이상이어야 합니다."
+          );
+        } else {
+          passwordInput.setCustomValidity(""); // 유효성 오류 제거
+        }
+      });
+
+      document.querySelector("button").addEventListener("click", function () {
+        if (!form.checkValidity()) {
+          form.reportValidity();
+        }
+      });
+    </script>
+  </body>
+</html>

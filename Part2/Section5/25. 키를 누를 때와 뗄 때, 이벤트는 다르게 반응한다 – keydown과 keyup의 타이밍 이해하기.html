@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input type="text" id="example" placeholder="키보드를 눌러보세요" />
+
+    <script>
+      const input = document.getElementById("example");
+
+      input.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          console.log("엔터가 눌렸습니다!");
+        } else if (event.key === "ArrowUp") {
+          console.log("위쪽 방향키가 눌렸습니다.");
+        }
+      });
+
+      input.addEventListener("keyup", function (event) {
+        console.log("keyup 발생!", event.key);
+      });
+    </script>
+  </body>
+</html>

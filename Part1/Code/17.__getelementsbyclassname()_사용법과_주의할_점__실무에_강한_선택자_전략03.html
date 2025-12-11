@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <ul>
+      <li class="menu-item active">Home</li>
+      <li class="menu-item">About</li>
+    </ul>
+
+    <script>
+      const items = document.getElementsByClassName("menu-item");
+
+      // HTMLCollection이라서 forEach는 에러 발생
+      // items.forEach(...) ❌
+
+      const itemsArray = Array.from(items);
+      itemsArray.forEach((el) => console.log(el.textContent)); // ✅
+    </script>
+  </body>
+</html>

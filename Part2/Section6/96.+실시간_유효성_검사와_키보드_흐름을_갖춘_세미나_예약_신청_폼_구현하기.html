@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>세미나 신청 폼</title>
+    <style>
+      form {
+        max-width: 400px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-family: sans-serif;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 15px;
+      }
+
+      input,
+      select,
+      textarea {
+        display: block;
+        width: 100%;
+        padding: 8px;
+        margin-top: 4px;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+      }
+
+      .hint {
+        display: block;
+        margin-top: 5px;
+        font-size: 13px;
+        color: #555;
+      }
+
+      input.valid,
+      select.valid,
+      textarea.valid {
+        border-color: green;
+      }
+
+      input.invalid,
+      select.invalid,
+      textarea.invalid {
+        border-color: red;
+      }
+
+      button {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        margin-top: 10px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      button:disabled {
+        background-color: #aaa;
+        cursor: not-allowed;
+      }
+
+      #result-message {
+        text-align: center;
+        font-weight: bold;
+        margin-top: 20px;
+        color: #2c3e50;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="seminar-form">
+      <label
+        >이름:
+        <input type="text" name="name" maxlength="10" autofocus />
+        <span class="hint" id="name-hint"></span>
+      </label>
+
+      <label
+        >이메일:
+        <input type="email" name="email" />
+        <span class="hint" id="email-hint"></span>
+      </label>
+
+      <label
+        >참가 일자:
+        <select name="date">
+          <option value="">일자를 선택하세요</option>
+          <option value="2025-08-10">2025년 8월 10일</option>
+          <option value="2025-08-11">2025년 8월 11일</option>
+        </select>
+        <span class="hint" id="date-hint"></span>
+      </label>
+
+      <label
+        >참석자 수:
+        <input type="number" name="count" min="1" />
+        <span class="hint" id="count-hint"></span>
+      </label>
+
+      <label
+        >요청 사항:
+        <textarea name="memo" rows="3"></textarea>
+        <span class="hint" id="memo-hint"></span>
+      </label>
+
+      <button type="submit" disabled>신청하기</button>
+    </form>
+
+    <p id="result-message"></p>
+
+    <script>
+      const form = document.getElementById("seminar-form");
+      const fields = {
+        name: form.name,
+        email: form.email,
+        date: form.date,
+        count: form.count,
+        memo: form.memo,
+      };
+      const hints = {
+        name: document.getElementById("name-hint"),
+        email: document.getElementById("email-hint"),
+        date: document.getElementById("date-hint"),
+        count: document.getElementById("count-hint"),
+        memo: document.getElementById("memo-hint"),
+      };
+      const submitBtn = form.querySelector("button");
+      const resultMessage = document.getElementById("result-message");
+
+      const validationState = {
+        name: false,
+        email: false,
+        date: false,
+        count: false,
+      };
+
+      // 이름 유효성 검사 – 2자 이상
+      fields.name.addEventListener("input", () => {
+        const len = fields.name.value.trim().length;
+        if (len >= 2) {
+          hints.name.textContent = `✅ ${len}자 입력됨`;
+          setValid("name");
+        } else {
+          hints.name.textContent = "❌ 이름은 2자 이상 입력해주세요.";
+          setInvalid("name");
+        }
+        updateSubmitState();
+      });
+
+      // 이메일 유효성 검사 – blur 시점에서만 실행
+      fields.email.addEventListener("blur", () => {
+        const val = fields.email.value;
+        if (val.includes("@") && val.includes(".")) {
+          hints.email.textContent = "✅ 유효한 이메일입니다.";
+          setValid("email");
+        } else {
+          hints.email.textContent = "❌ 이메일 형식을 확인해주세요.";
+          setInvalid("email");
+        }
+        updateSubmitState();
+      });
+
+      // 날짜 선택 – change 이벤트 사용
+      fields.date.addEventListener("change", () => {
+        if (fields.date.value !== "") {
+          hints.date.textContent = "✅ 날짜 선택 완료";
+          setValid("date");
+        } else {
+          hints.date.textContent = "❌ 날짜를 선택해주세요.";
+          setInvalid("date");
+        }
+        updateSubmitState();
+      });
+
+      // 참석자 수 유효성 검사 – input 이벤트
+      fields.count.addEventListener("input", () => {
+        const num = parseInt(fields.count.value);
+        if (!isNaN(num) && num >= 1) {
+          hints.count.textContent = `✅ ${num}명`;
+          setValid("count");
+        } else {
+          hints.count.textContent = "❌ 1명 이상 입력하세요.";
+          setInvalid("count");
+        }
+        updateSubmitState();
+      });
+
+      // 요청사항 – 안내 문구만 표시
+      fields.memo.addEventListener("focus", () => {
+        hints.memo.textContent = "요청사항은 선택 입력입니다.";
+      });
+      fields.memo.addEventListener("blur", () => {
+        hints.memo.textContent = "";
+      });
+
+      // 상태 표시 함수들
+      function setValid(key) {
+        fields[key].classList.add("valid");
+        fields[key].classList.remove("invalid");
+        validationState[key] = true;
+      }
+      function setInvalid(key) {
+        fields[key].classList.add("invalid");
+        fields[key].classList.remove("valid");
+        validationState[key] = false;
+      }
+      function updateSubmitState() {
+        const allValid = Object.values(validationState).every(Boolean);
+        submitBtn.disabled = !allValid;
+      }
+
+      // 엔터 키로 다음 필드 이동 + 마지막에서 submit 실행
+      form.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          const focusables = [
+            ...form.querySelectorAll("input, select, textarea"),
+          ];
+          const current = document.activeElement;
+          const idx = focusables.indexOf(current);
+          if (idx >= 0 && idx < focusables.length - 1) {
+            e.preventDefault();
+            focusables[idx + 1].focus();
+          } else if (idx === focusables.length - 1 && !submitBtn.disabled) {
+            e.preventDefault();
+            form.requestSubmit();
+          }
+        }
+      });
+
+      // submit 이벤트 처리
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const firstInvalidKey = Object.keys(validationState).find(
+          (key) => !validationState[key]
+        );
+        if (firstInvalidKey) {
+          fields[firstInvalidKey].focus();
+          return;
+        }
+        resultMessage.textContent = "🎉 신청 완료!";
+        form.reset();
+        Object.keys(validationState).forEach((k) => {
+          validationState[k] = false;
+          fields[k].classList.remove("valid", "invalid");
+          hints[k].textContent = "";
+        });
+        submitBtn.disabled = true;
+      });
+    </script>
+  </body>
+</html>

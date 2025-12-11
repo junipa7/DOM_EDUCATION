@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>온라인 상담 예약</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+        background: #f9f9f9;
+      }
+
+      form {
+        max-width: 500px;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 20px;
+      }
+
+      input,
+      select,
+      textarea {
+        display: block;
+        width: 100%;
+        padding: 8px;
+        margin-top: 6px;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 14px;
+      }
+
+      .error-message {
+        color: red;
+        font-size: 13px;
+        height: 16px;
+        margin-top: 4px;
+        display: block;
+      }
+
+      .char-count {
+        font-size: 12px;
+        margin-top: 2px;
+        color: #555;
+        text-align: right;
+      }
+
+      .valid {
+        border-color: green;
+      }
+
+      .invalid {
+        border-color: red;
+      }
+
+      button {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        color: white;
+        cursor: pointer;
+      }
+
+      button:disabled {
+        background-color: #999;
+        cursor: not-allowed;
+      }
+
+      #result-message {
+        text-align: center;
+        font-weight: bold;
+        margin-top: 20px;
+        color: #2c3e50;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="consult-form" novalidate>
+      <label>
+        상담 종류:
+        <select name="type" required>
+          <option value="">선택하세요</option>
+          <option value="financial">금융 상담</option>
+          <option value="medical">의료 상담</option>
+          <option value="legal">법률 상담</option>
+        </select>
+        <span class="error-message" id="type-error" aria-live="polite"></span>
+      </label>
+
+      <label>
+        상담 날짜:
+        <input type="date" name="date" disabled />
+        <span class="error-message" id="date-error" aria-live="polite"></span>
+      </label>
+
+      <label>
+        상담 시간:
+        <input type="time" name="time" disabled />
+        <span class="error-message" id="time-error" aria-live="polite"></span>
+      </label>
+
+      <label>
+        이름:
+        <input type="text" name="name" maxlength="10" />
+        <span class="char-count" id="name-count">0 / 10</span>
+        <span class="error-message" id="name-error" aria-live="polite"></span>
+      </label>
+
+      <label>
+        상담 목적:
+        <textarea name="purpose" rows="3"></textarea>
+        <span class="error-message" id="purpose-hint" aria-live="polite"></span>
+      </label>
+
+      <label>
+        <input type="checkbox" name="agree" />
+        개인정보 수집 및 이용에 동의합니다.
+        <span class="error-message" id="agree-error" aria-live="polite"></span>
+      </label>
+
+      <button type="submit" disabled>상담 예약하기</button>
+    </form>
+
+    <p id="result-message"></p>
+
+    <script>
+      const form = document.getElementById("consult-form");
+      const fields = form.elements;
+      const submitBtn = form.querySelector("button");
+      const resultMessage = document.getElementById("result-message");
+
+      const errorMap = {
+        type: document.getElementById("type-error"),
+        date: document.getElementById("date-error"),
+        time: document.getElementById("time-error"),
+        name: document.getElementById("name-error"),
+        purpose: document.getElementById("purpose-hint"),
+        agree: document.getElementById("agree-error"),
+      };
+
+      const charCount = document.getElementById("name-count");
+
+      const debounce = (fn, delay = 300) => {
+        let timer;
+        return (...args) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), delay);
+        };
+      };
+
+      const validationState = {
+        type: false,
+        date: false,
+        time: false,
+        name: false,
+        agree: false,
+      };
+
+      const updateSubmitState = () => {
+        const allValid = Object.values(validationState).every(Boolean);
+        submitBtn.disabled = !allValid;
+      };
+
+      const setFieldState = (el, valid, message = "") => {
+        const name = el.name;
+        el.setCustomValidity(valid ? "" : message);
+        validationState[name] = valid;
+        errorMap[name].textContent = valid ? "" : message;
+        el.classList.toggle("valid", valid);
+        el.classList.toggle("invalid", !valid);
+        updateSubmitState();
+      };
+
+      fields.type.addEventListener("change", () => {
+        const valid = fields.type.value !== "";
+        setFieldState(fields.type, valid, "상담 종류를 선택해주세요.");
+        fields.date.disabled = !valid;
+        fields.time.disabled = !valid;
+      });
+
+      fields.date.addEventListener("blur", () => {
+        const dateVal = new Date(fields.date.value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const valid = fields.date.value && dateVal >= today;
+        setFieldState(
+          fields.date,
+          valid,
+          "오늘 이후 날짜만 선택할 수 있습니다."
+        );
+      });
+
+      fields.time.addEventListener("input", () => {
+        const time = fields.time.value;
+        const [h, m] = time.split(":").map(Number);
+        const valid = h >= 9 && h < 18;
+        setFieldState(
+          fields.time,
+          valid,
+          "상담 시간은 09:00 ~ 18:00 사이여야 합니다."
+        );
+      });
+
+      fields.name.addEventListener(
+        "input",
+        debounce(() => {
+          const val = fields.name.value.trim();
+          charCount.textContent = `${val.length} / 10`;
+          const valid = val.length >= 2;
+          setFieldState(fields.name, valid, "이름은 2자 이상이어야 합니다.");
+        })
+      );
+
+      fields.purpose.addEventListener("focus", () => {
+        errorMap.purpose.textContent = "상담 목적은 선택 항목입니다.";
+      });
+
+      fields.purpose.addEventListener("blur", () => {
+        errorMap.purpose.textContent = "";
+      });
+
+      fields.agree.addEventListener("change", () => {
+        const checked = fields.agree.checked;
+        setFieldState(fields.agree, checked, "약관 동의가 필요합니다.");
+      });
+
+      form.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          const focusables = [
+            ...form.querySelectorAll("input, select, textarea"),
+          ];
+          const current = document.activeElement;
+          const index = focusables.indexOf(current);
+          if (index >= 0 && index < focusables.length - 1) {
+            e.preventDefault();
+            focusables[index + 1].focus();
+          } else if (index === focusables.length - 1 && !submitBtn.disabled) {
+            e.preventDefault();
+            form.requestSubmit();
+          }
+        }
+      });
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          const firstInvalid = Object.keys(validationState).find(
+            (k) => !validationState[k]
+          );
+          if (firstInvalid) fields[firstInvalid].focus();
+          return;
+        }
+        resultMessage.textContent = "🎉 상담 신청이 완료되었습니다!";
+        form.reset();
+        charCount.textContent = "0 / 10";
+        Object.keys(validationState).forEach((key) => {
+          validationState[key] = false;
+          fields[key].classList.remove("valid", "invalid");
+          errorMap[key].textContent = "";
+          if (fields[key].type !== "checkbox")
+            fields[key].disabled = key === "date" || key === "time";
+        });
+        updateSubmitState();
+      });
+    </script>
+  </body>
+</html>

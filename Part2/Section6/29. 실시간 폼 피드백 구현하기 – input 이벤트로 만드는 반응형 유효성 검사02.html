@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form>
+      <label>
+        닉네임 (10자 이내):
+        <input type="text" id="nickname" maxlength="10" />
+      </label>
+      <p id="nickname-msg"></p>
+      <button type="submit" disabled>가입하기</button>
+    </form>
+
+    <script>
+      const nicknameInput = document.getElementById("nickname");
+      const message = document.getElementById("nickname-msg");
+      const submitBtn = document.querySelector("button");
+
+      const pattern = /^[a-zA-Z0-9가-힣]{1,10}$/;
+
+      nicknameInput.addEventListener("input", function () {
+        const value = nicknameInput.value;
+
+        if (!pattern.test(value)) {
+          message.textContent = "한글, 영문, 숫자만 입력 가능해요!";
+          message.style.color = "red";
+          submitBtn.disabled = true;
+          return;
+        }
+
+        message.textContent = `${value.length} / 10`;
+        message.style.color = "green";
+        submitBtn.disabled = false;
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>예약 확인 & 영수증 (최적화)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- 폰트 최적화 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- 히어로 이미지 우선 힌트 -->
+    <link
+      rel="preload"
+      as="image"
+      href="https://picsum.photos/1200/600?random=11"
+    />
+
+    <style>
+      :root {
+        --bg: #f6f7fb;
+        --panel: #fff;
+        --ink: #0f172a;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --brand: #2563eb;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+      }
+      header {
+        padding: 16px 20px;
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+      }
+      main {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .hero {
+        display: flex;
+        gap: 16px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+      .hero img {
+        width: 600px;
+        height: auto;
+        aspect-ratio: 2/1;
+        border-radius: 10px;
+        flex: 0 0 auto;
+      }
+      .info {
+        flex: 1;
+      }
+      .muted {
+        color: var(--muted);
+        margin-top: 4px;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .btn {
+        padding: 10px 14px;
+        border: 0;
+        border-radius: 8px;
+        background: var(--brand);
+        color: #fff;
+        cursor: pointer;
+      }
+      .btn[disabled] {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .btn.outline {
+        background: #fff;
+        color: var(--ink);
+        border: 1px solid var(--border);
+      }
+      .receipt {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        margin-top: 16px;
+      }
+      .line {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #f0f2f5;
+      }
+      .thumbs {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+      }
+      .thumbs img {
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 2/1;
+        border-radius: 8px;
+      }
+      [data-lazy] {
+        content-visibility: auto;
+        contain-intrinsic-size: 800px 600px;
+      }
+      .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal .box {
+        background: #fff;
+        border-radius: 12px;
+        padding: 16px;
+        max-width: 90%;
+        width: 560px;
+      }
+      @media print {
+        header,
+        .actions,
+        .thumbs,
+        .modal {
+          display: none !important;
+        }
+        body {
+          background: #fff;
+        }
+        .receipt {
+          border: 0;
+          break-inside: avoid;
+        }
+        .line strong {
+          font-family: ui-monospace, Menlo, monospace;
+        }
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+      }
+    </style>
+
+    <script defer>
+      addEventListener("DOMContentLoaded", () => {
+        const $ = (s) => document.querySelector(s);
+        const status = $("#status");
+        const announce = (msg) => {
+          status.textContent = msg;
+        };
+
+        const codeEl = $("#code");
+        const modal = $("#modal"),
+          mTitle = $("#modal-title"),
+          mBody = $("#modal-body");
+        const buttons = {
+          print: $("#btn-print"),
+          invoice: $("#btn-invoice"),
+          copy: $("#btn-copy"),
+          share: $("#btn-share"),
+          map: $("#btn-map"),
+          cal: $("#btn-calendar"),
+          toggle: $("#btn-toggle-items"),
+        };
+        const items = $("#items");
+
+        const immediateUI = (btn, txt, job) => {
+          const prev = btn.textContent;
+          btn.disabled = true;
+          btn.textContent = txt;
+          announce(txt);
+          setTimeout(async () => {
+            try {
+              await job();
+            } finally {
+              btn.textContent = prev;
+              btn.disabled = false;
+            }
+          }, 0);
+        };
+
+        buttons.print.addEventListener("click", () =>
+          immediateUI(buttons.print, "PDF 준비중…", async () => {
+            window.print();
+          })
+        );
+        buttons.invoice.addEventListener("click", () =>
+          immediateUI(buttons.invoice, "전송중…", async () => {
+            await new Promise((r) => setTimeout(r, 150));
+            alert("세부 영수증을 이메일로 발송했습니다.");
+          })
+        );
+        buttons.copy.addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(codeEl.textContent.trim());
+            buttons.copy.textContent = "복사됨!";
+            setTimeout(() => (buttons.copy.textContent = "예약번호 복사"), 900);
+          } catch {
+            alert("복사 실패");
+          }
+        });
+        buttons.share.addEventListener("click", async () => {
+          const payload = {
+            title: "예약 공유",
+            text: "내 예약 정보",
+            url: location.href,
+          };
+          if (navigator.share) {
+            try {
+              await navigator.share(payload);
+            } catch {}
+          } else {
+            mTitle.textContent = "공유";
+            mBody.innerHTML = `<p>아래 링크를 복사해 공유하세요.</p><input value="${location.href}" style="width:100%">`;
+            modal.style.display = "flex";
+          }
+        });
+        buttons.map.addEventListener("click", () =>
+          immediateUI(buttons.map, "지도 로딩…", async () => {
+            mTitle.textContent = "호텔 위치";
+            mBody.innerHTML = `<iframe src="https://maps.google.com/maps?q=seoul&z=13&output=embed" width="100%" height="320" style="border:0"></iframe>`;
+            modal.style.display = "flex";
+          })
+        );
+        buttons.cal.addEventListener("click", () =>
+          immediateUI(buttons.cal, "파일 생성…", async () => {
+            const ics = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:호텔 체크인\nDTSTART:20250903\nDTEND:20250906\nDESCRIPTION:리버사이드 호텔\nEND:VEVENT\nEND:VCALENDAR`;
+            const blob = new Blob([ics], { type: "text/calendar" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "reservation.ics";
+            a.click();
+            URL.revokeObjectURL(a.href);
+          })
+        );
+        buttons.toggle.addEventListener("click", () => {
+          items.hidden = !items.hidden;
+          buttons.toggle.textContent = items.hidden
+            ? "세부 항목 펼치기"
+            : "세부 항목 접기";
+        });
+
+        $("#modal-close").addEventListener(
+          "click",
+          () => (modal.style.display = "none")
+        );
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) modal.style.display = "none";
+        });
+        addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && modal.style.display === "flex")
+            modal.style.display = "none";
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <header>🏨 예약 확인 & 영수증 (Optimized)</header>
+    <main>
+      <section class="hero">
+        <img
+          src="https://picsum.photos/1200/600?random=11"
+          srcset="
+            https://picsum.photos/600/300?random=11   600w,
+            https://picsum.photos/900/450?random=11   900w,
+            https://picsum.photos/1200/600?random=11 1200w
+          "
+          sizes="(max-width: 900px) 100vw, 600px"
+          fetchpriority="high"
+          decoding="async"
+          width="600"
+          height="300"
+          alt="호텔 외관"
+        />
+        <div class="info">
+          <h1>리버사이드 호텔</h1>
+          <p class="muted">
+            체크인 2025-09-03 · 체크아웃 2025-09-06 · 예약번호
+            <code id="code">RSV-8421</code>
+          </p>
+          <div class="actions">
+            <button class="btn" id="btn-print">인쇄 / PDF 저장</button>
+            <button class="btn outline" id="btn-invoice">
+              세부 영수증 보기
+            </button>
+            <button class="btn outline" id="btn-copy">예약번호 복사</button>
+            <button class="btn outline" id="btn-share">공유</button>
+            <button class="btn outline" id="btn-map">지도 보기</button>
+            <button class="btn outline" id="btn-calendar">캘린더 추가</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="receipt" id="receipt" data-lazy>
+        <h3>요금 내역</h3>
+        <div class="line">
+          <span>객실 요금(3박)</span><strong>₩420,000</strong>
+        </div>
+        <div class="line"><span>세금/봉사료</span><strong>₩42,000</strong></div>
+        <div class="line"><span>리조트 피</span><strong>₩18,000</strong></div>
+        <div class="line">
+          <span><strong>합계</strong></span
+          ><strong>₩480,000</strong>
+        </div>
+        <button class="btn outline" id="btn-toggle-items">
+          세부 항목 펼치기
+        </button>
+        <div id="items" hidden>
+          <div class="line"><span>룸서비스</span><strong>₩28,000</strong></div>
+          <div class="line"><span>미니바</span><strong>₩9,000</strong></div>
+        </div>
+      </section>
+
+      <section class="thumbs">
+        <img
+          loading="lazy"
+          decoding="async"
+          src="https://picsum.photos/800/400?random=21"
+          srcset="
+            https://picsum.photos/400/200?random=21 400w,
+            https://picsum.photos/800/400?random=21 800w
+          "
+          sizes="(max-width: 700px) 100vw, 400px"
+          width="400"
+          height="200"
+          alt="객실1"
+        />
+        <!-- 다른 썸네일도 동일 패턴 -->
+      </section>
+    </main>
+
+    <div
+      class="modal"
+      id="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      <div class="box">
+        <h3 id="modal-title">모달</h3>
+        <div id="modal-body">내용</div>
+        <button class="btn outline" id="modal-close">닫기</button>
+      </div>
+    </div>
+    <div
+      id="status"
+      class="sr-only"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+  </body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #viewport {
+        height: 400px;
+        overflow-y: auto;
+        border: 5px solid #ccc;
+        position: relative;
+      }
+
+      .item {
+        height: 50px;
+        line-height: 50px;
+        padding-left: 10px;
+        border-bottom: 1px solid blue;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="viewport">
+      <div id="scroll-area"></div>
+    </div>
+
+    <script>
+      const totalCount = 10000;
+      const itemHeight = 50;
+      const viewport = document.getElementById("viewport");
+      const scrollArea = document.getElementById("scroll-area");
+
+      scrollArea.style.height = `${totalCount * itemHeight}px`;
+
+      const render = () => {
+        const scrollTop = viewport.scrollTop;
+        const startIdx = Math.floor(scrollTop / itemHeight);
+        const visibleCount = Math.ceil(viewport.clientHeight / itemHeight) + 5;
+        const endIdx = Math.min(startIdx + visibleCount, totalCount);
+
+        scrollArea.innerHTML = "";
+
+        for (let i = startIdx; i < endIdx; i++) {
+          const div = document.createElement("div");
+          div.className = "item";
+          div.style.position = "absolute";
+          div.style.top = `${i * itemHeight}px`;
+          div.textContent = `아이템 #${i}`;
+          scrollArea.appendChild(div);
+        }
+      };
+
+      viewport.addEventListener("scroll", render);
+      render();
+    </script>
+  </body>
+</html>

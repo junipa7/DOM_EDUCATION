@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>iframe Lazy Loading 예시</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        line-height: 1.6;
+        padding: 20px;
+      }
+      iframe {
+        width: 600px;
+        height: 400px;
+        border: 2px solid #ccc;
+        margin-top: 50vh; /* 스크롤을 내려야 보이도록 배치 */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>iframe Lazy Loading</h1>
+    <p>
+      아래의 iframe은 <code>loading="lazy"</code> 속성이 적용되어 있습니다.
+      따라서 화면에 가까워지기 전까지는 네트워크 요청을 보내지 않습니다.
+    </p>
+
+    <!-- 스크롤해야 iframe이 로딩됨 -->
+    <iframe src="https://example.com" loading="lazy"></iframe>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form id="myForm">
+      <input type="text" placeholder="이름 입력" />
+      <button>제출</button>
+    </form>
+
+    <script>
+      document
+        .getElementById("myForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          alert("폼 제출이 차단되었습니다!");
+        });
+
+      //   button.addEventListener("click", function (e) {
+      //     e.preventDefault(); // 기본 동작 차단
+      //     e.stopPropagation(); // 이벤트 전파 차단
+      //   });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>[ANSWER] 가상 리스트 + 무한 로드 + 미디어/스크립트 Lazy</title>
+  <style>
+    :root{
+      --maxw:1000px;
+      --vh:560px;             /* 데모용 뷰포트 */
+      --row-h:92px;           /* 행 높이(고정) = 이미지72 + 패딩/보더 여유 */
+      --gap:12px;
+      --radius:12px;
+      --muted:#667085;
+      --bg:#fafafa; --elev:#fff; --bd:#eaeaea;
+      --shadow:0 6px 18px rgba(0,0,0,.06);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Noto Sans,sans-serif;background:var(--bg);color:#222}
+    header{
+      position:sticky;top:0;background:var(--elev);border-bottom:1px solid var(--bd);
+      padding:14px 16px;z-index:10;font-weight:700;display:flex;align-items:center;gap:10px
+    }
+    header .badge{background:#111;color:#fff;border-radius:999px;padding:4px 8px;font-size:12px}
+    .container{max-width:var(--maxw);margin:20px auto;padding:0 16px}
+
+    /* Virtual viewport */
+    #viewport{
+      height:var(--vh); overflow-y:auto; position:relative; background:var(--elev);
+      border:1px solid var(--bd); border-radius:var(--radius); box-shadow:var(--shadow)
+    }
+    #scroll-area{position:relative}
+    .row{
+      position:absolute; left:0; right:0; height:var(--row-h);
+      display:flex; gap:var(--gap); align-items:center; padding:10px 12px; border-bottom:1px solid var(--bd);
+      background:var(--elev)
+    }
+    .row:focus-within{outline:2px solid #2563eb; outline-offset:-2px}
+    .thumb{width:72px;height:72px;border-radius:10px;object-fit:cover; background:#ddd; opacity:.001; transition:opacity .3s ease, transform .3s ease}
+    .thumb.loaded{opacity:1; transform:scale(1.02)}
+    .title{font-weight:700; margin-bottom:4px}
+    .muted{color:var(--muted); font-size:13px}
+    .actions button{
+      background:#111; color:#fff; border:0; border-radius:10px; padding:8px 12px; cursor:pointer
+    }
+    .actions button:focus{outline:2px solid #2563eb; outline-offset:2px}
+
+    /* Sentinel & footer content */
+    .sentinel{height:1px}
+    .tail{
+      max-width:var(--maxw); margin:24px auto; padding:0 16px;
+      display:grid; grid-template-columns:1fr 1fr; gap:16px
+    }
+    .card{
+      background:var(--elev); border:1px solid var(--bd); border-radius:var(--radius); padding:12px; box-shadow:var(--shadow)
+    }
+
+    /* Lazy video */
+    .video-shell{position:relative}
+    video{width:100%; border-radius:12px; background:#000}
+    .play-overlay{
+      position:absolute; inset:0; display:grid; place-items:center; background:rgba(0,0,0,.35);
+      color:#fff; font-size:18px; border:0; cursor:pointer; border-radius:12px
+    }
+
+    /* Lazy ad/analytics placeholders */
+    .placeholder{height:160px; display:grid; place-items:center; background:#f2f2f2; border-radius:12px; color:#888}
+  </style>
+</head>
+<body>
+<header>
+  신상품 피드
+  <span class="badge">Virtualized</span>
+</header>
+
+<div class="container">
+  <!-- Virtualized List -->
+  <div id="viewport" aria-label="신상품 목록">
+    <div id="scroll-area" role="list"></div>
+    <div id="sentinel" class="sentinel" aria-hidden="true"></div>
+  </div>
+
+  <!-- Tail section: 동영상 / 광고 / 분석 (모두 Lazy) -->
+  <section class="tail" id="tail">
+    <article class="card">
+      <h3>추천 브이로그</h3>
+      <div class="video-shell">
+        <video id="vlog" controls preload="none" playsinline
+               poster="https://images.unsplash.com/photo-1520975922215-230f3cd8a487?w=1280&q=80&auto=format&fit=crop">
+          <source data-src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm" type="video/webm">
+          <source data-src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+        </video>
+        <button class="play-overlay" aria-label="재생">▶ 동영상 보기</button>
+      </div>
+    </article>
+
+    <article class="card">
+      <h3>Sponsored & Analytics</h3>
+      <div id="ad-slot" class="placeholder" aria-label="광고 영역">광고 준비중…</div>
+      <div id="ana-slot" class="placeholder" aria-label="분석 스크립트">분석 준비중…</div>
+    </article>
+  </section>
+</div>
+
+<script>
+  // ----------------------------
+  // 0) 환경 설정
+  // ----------------------------
+  const ROW_H = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--row-h')); // 행 높이
+  const PAGE_SIZE = 800;   // 데모용 대용량 페이지 크기
+  const MAX_PAGES = 5;     // 총 4,000개
+  const PRELOAD_MARGIN_ROWS = 8; // 뷰포트 대비 여유 행
+
+  const viewport = document.getElementById('viewport');
+  const area = document.getElementById('scroll-area');
+  const sentinel = document.getElementById('sentinel');
+
+  let page = 0;
+  let items = []; // 누적 아이템
+  let loading = false;
+  let done = false;
+
+  // ----------------------------
+  // 1) 데이터 로드(실무에서는 fetch 대체)
+  // ----------------------------
+  async function loadPage(){
+    if (loading || done) return;
+    if (page >= MAX_PAGES) { done = true; return; }
+
+    loading = true;
+    // 네트워크 지연 시뮬레이션
+    await new Promise(r => setTimeout(r, 150));
+
+    const start = page * PAGE_SIZE;
+    const chunk = Array.from({length: PAGE_SIZE}, (_,i)=>{
+      const id = start + i + 1;
+      return {
+        id,
+        title: `상품 #${id}`,
+        img: `https://picsum.photos/seed/${id}/128/128`,
+        price: (Math.random()*90000+10000|0).toLocaleString('ko-KR')
+      };
+    });
+
+    items = items.concat(chunk);
+    page++;
+
+    // 스크롤 전체 높이 갱신
+    area.style.height = (items.length * ROW_H) + 'px';
+
+    // 즉시 렌더(뷰포트에 보이는 범위만)
+    render();
+    loading = false;
+  }
+
+  // ----------------------------
+  // 2) 가상 리스트 렌더
+  // ----------------------------
+  function render(){
+    const scrollTop = viewport.scrollTop;
+    const vh = viewport.clientHeight;
+
+    const start = Math.max(0, Math.floor(scrollTop / ROW_H) - PRELOAD_MARGIN_ROWS);
+    const visible = Math.ceil(vh / ROW_H) + PRELOAD_MARGIN_ROWS * 2;
+    const end = Math.min(start + visible, items.length);
+
+    // DOM 최소화: 필요한 행만 다시 그림
+    area.innerHTML = '';
+
+    for(let i = start; i < end; i++){
+      const p = items[i];
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.style.top = (i * ROW_H) + 'px';
+      row.setAttribute('role','listitem');
+      row.innerHTML = `
+        <img class="thumb" alt="${p.title}" width="72" height="72" data-src="${p.img}">
+        <div style="flex:1 1 auto; min-width:0">
+          <div class="title">${p.title}</div>
+          <div class="muted">₩${p.price}</div>
+        </div>
+        <div class="actions">
+          <button aria-label="${p.title} 장바구니 담기">담기</button>
+        </div>
+      `;
+      area.appendChild(row);
+    }
+
+    // 이미지 Lazy (현재 DOM에 존재하는 썸네일만 관찰)
+    observeThumbs();
+  }
+
+  // ----------------------------
+  // 3) 이미지 Lazy: data-src → src
+  // ----------------------------
+  const imgIO = new IntersectionObserver((entries, obs)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const img = e.target;
+        const src = img.getAttribute('data-src');
+        if(src){
+          img.src = src;
+          img.onload = ()=> img.classList.add('loaded');
+          img.removeAttribute('data-src');
+        }
+        obs.unobserve(img);
+      }
+    });
+  }, { root: viewport, rootMargin: '200px 0px' });
+
+  function observeThumbs(){
+    area.querySelectorAll('img.thumb[data-src]').forEach(img => imgIO.observe(img));
+  }
+
+  // ----------------------------
+  // 4) 스크롤 이벤트: 가시 범위만 유지
+  // ----------------------------
+  viewport.addEventListener('scroll', render, { passive: true });
+
+  // ----------------------------
+  // 5) 무한 로드: sentinel IO
+  // ----------------------------
+  const loadIO = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        loadPage();
+      }
+    });
+  }, { root: viewport, rootMargin: '800px 0px' });
+  loadIO.observe(sentinel);
+
+  // ----------------------------
+  // 6) Tail 영역: 동영상/광고/분석 Lazy
+  // ----------------------------
+  // 6-1) Video
+  const video = document.getElementById('vlog');
+  const playBtn = document.querySelector('.play-overlay');
+  let videoPrepared = false;
+  const videoIO = new IntersectionObserver((entries, obs)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting && !videoPrepared){
+        video.querySelectorAll('source[data-src]').forEach(s=>{
+          s.setAttribute('src', s.getAttribute('data-src'));
+          s.removeAttribute('data-src');
+        });
+        video.load();
+        videoPrepared = true;
+        obs.unobserve(video);
+      }
+    });
+  }, { root: null, rootMargin: '400px 0px' });
+  videoIO.observe(video);
+
+  playBtn.addEventListener('click', async ()=>{
+    playBtn.style.display = 'none';
+    try { await video.play(); }
+    catch(e){ playBtn.style.display='grid'; alert('재생 버튼을 다시 눌러 주세요.'); }
+  });
+
+  // 6-2) 광고/분석 스크립트 Lazy
+  const adSlot = document.getElementById('ad-slot');
+  const anaSlot = document.getElementById('ana-slot');
+
+  const scriptIO = new IntersectionObserver((entries, obs)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        // 광고 스크립트 삽입(데모: 콘솔 로깅으로 대체)
+        const adScript = document.createElement('script');
+        adScript.textContent = `
+          console.log('[AD] Loaded when visible');
+          document.getElementById('ad-slot').textContent = '광고 로드 완료';
+        `;
+        document.body.appendChild(adScript);
+
+        // 분석 스크립트 삽입(데모)
+        const anaScript = document.createElement('script');
+        anaScript.textContent = `
+          console.log('[Analytics] Loaded when visible');
+          document.getElementById('ana-slot').textContent = '분석 스크립트 로드 완료';
+        `;
+        document.body.appendChild(anaScript);
+
+        obs.unobserve(adSlot);
+        obs.unobserve(anaSlot);
+      }
+    });
+  }, { root: null, rootMargin: '200px 0px' });
+
+  scriptIO.observe(adSlot);
+  scriptIO.observe(anaSlot);
+
+  // ----------------------------
+  // 7) 초기 데이터 + 첫 렌더
+  // ----------------------------
+  loadPage();
+  render();
+</script>
+</body>
+</html>

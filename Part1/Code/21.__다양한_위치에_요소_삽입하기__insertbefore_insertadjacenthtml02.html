@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <div id="box">Hello</div>
+
+    <script>
+      // element.insertAdjacentHTML(position, htmlString);
+      const box = document.getElementById("box");
+      box.insertAdjacentHTML("beforebegin", "<p>1. 앞에 추가</p>");
+      box.insertAdjacentHTML("afterbegin", "<p>2. 안에 맨 앞</p>");
+      box.insertAdjacentHTML("beforeend", "<p>3. 안에 맨 뒤</p>");
+      box.insertAdjacentHTML("afterend", "<p>4. 뒤에 추가</p>");
+    </script>
+  </body>
+</html>

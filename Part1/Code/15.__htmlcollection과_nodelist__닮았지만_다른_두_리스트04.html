@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <ul>
+      <li>철수</li>
+      <li>지민</li>
+      <li>영희</li>
+    </ul>
+
+    <script>
+      const items = document.querySelectorAll(".item");
+
+      items.forEach((item) => {
+        const newItem = document.createElement("div");
+        newItem.className = "item";
+        document.body.appendChild(newItem);
+      });
+
+      console.log(document.querySelectorAll(".item").length); // 새로 생긴 요소 포함됨
+      console.log(items.length); // 여전히 원래 수만큼만 유지됨
+    </script>
+  </body>
+</html>

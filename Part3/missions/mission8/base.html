@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>[BASE] Critical CSS 미분리</title>
+
+  <!-- 문제: CSS 파일 4개가 모두 동기적으로 로드됨 (렌더 차단) -->
+  <link rel="stylesheet" href="/css/reset.css">
+  <link rel="stylesheet" href="/css/fonts.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/theme.css">
+
+  <style>
+    html,body{height:100%}
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <h1 class="title">빠른 첫 화면이 UX를 살립니다</h1>
+    <p class="subtitle">렌더링을 막는 CSS를 정리해보세요</p>
+    <button class="cta">지금 시작</button>
+  </section>
+</body>
+</html>

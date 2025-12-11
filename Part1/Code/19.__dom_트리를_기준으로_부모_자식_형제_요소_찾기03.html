@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <ul>
+      <li>첫째</li>
+      <li class="here">둘째</li>
+      <li>셋째</li>
+    </ul>
+
+    <script>
+      const current = document.querySelector(".here");
+
+      console.log(current.previousElementSibling.textContent); // "첫째"
+      console.log(current.nextElementSibling.textContent); // "셋째"
+    </script>
+  </body>
+</html>

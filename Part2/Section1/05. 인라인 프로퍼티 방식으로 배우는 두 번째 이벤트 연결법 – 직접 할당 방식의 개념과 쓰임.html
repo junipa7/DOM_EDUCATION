@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button>추가</button>
+    <button>삭제</button>
+
+    <script>
+      const button = document.querySelector("button");
+
+      button.onclick = function () {
+        alert("버튼이 클릭되었습니다!");
+      };
+
+      button.onclick = function () {
+        console.log("첫 번째 핸들러입니다");
+      };
+
+      button.onclick = function () {
+        console.log("두 번째 핸들러입니다");
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function debounce(callback, delay) {
+        let timeoutId; // 지연 실행을 위한 setTimeout ID를 저장할 변수
+        return function (...args) {
+          clearTimeout(timeoutId); // 이전에 예약된 실행을 취소
+          timeoutId = setTimeout(() => {
+            callback.apply(this, args); // delay만큼 아무 이벤트도 발생하지 않았을 때 콜백 실행
+          }, delay);
+        };
+      }
+
+      const input = document.getElementById("search");
+
+      input.addEventListener(
+        "input",
+        debounce(function () {
+          console.log("검색 요청:", input.value);
+        }, 500)
+      );
+    </script>
+  </body>
+</html>

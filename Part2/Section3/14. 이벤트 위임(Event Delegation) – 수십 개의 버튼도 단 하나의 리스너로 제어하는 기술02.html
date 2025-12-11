@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input type="text" id="itemInput" placeholder="새 항목 입력" />
+    <button id="addBtn">추가</button>
+
+    <ul id="itemList">
+      <li>
+        <span class="item-text">Item 1</span>
+        <button data-action="edit">수정</button>
+        <button data-action="delete">삭제</button>
+      </li>
+      <li>
+        <span class="item-text">Item 2</span>
+        <button data-action="edit">수정</button>
+        <button data-action="delete">삭제</button>
+      </li>
+    </ul>
+
+    <script>
+      const itemInput = document.getElementById("itemInput");
+      const addBtn = document.getElementById("addBtn");
+      const itemList = document.getElementById("itemList"); // itemList 선언 위치 변경
+
+      addBtn.addEventListener("click", function() {
+        const value = itemInput.value.trim();
+        if (value === "") return;
+
+        const newItem = document.createElement("li");
+        newItem.innerHTML = `
+          <span class="item-text">${value}</span>
+          <button data-action="complete">완료</button>
+          <button data-action="delete">삭제</button>
+        `;
+        itemList.appendChild(newItem);
+        itemInput.value = ""; // 입력 필드 초기화
+      });
+
+      itemList.addEventListener("click", function(event) {
+        const action = event.target.dataset.action; //data-action 속성적용, 앞의 data-는 생략
+
+        if (!action) return;
+
+        const listItem = event.target.closest("li");
+        const text = listItem.querySelector(".item-text");
+
+        if (action === "delete") {
+          console.log(action + "삭제 실행");
+          listItem.remove();
+        } else if (action === "edit") {
+          console.log(action + "수정 실행");
+          text.classList.toggle("editing")
+        } else if (action === "complete") {
+          console.log(action + "완료 실행");
+          text.classList.toggle("completed")
+        }
+          console.log(text);
+          console.log(event.target.dataset);
+      });
+
+
+      //   <button data-user-id="42">확인</button>
+      //   const userId = event.target.dataset.userId; // "42"
+    </script>
+  </body>
+</html>

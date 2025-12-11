@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="box">첫 번째 박스</div>
+    <div class="box">두 번째 박스</div>
+    <div class="box">세 번째 박스</div>
+
+    <div id="list">
+      <p class="highlight">강조 1</p>
+      <p class="highlight">강조 2</p>
+      <p>일반 문장</p>
+    </div>
+
+    <input type="text" />
+    <input type="password" />
+    <input type="text" />
+
+    <script>
+      const boxes = document.querySelectorAll(".box");
+      const highlightedItems = document.querySelectorAll("#list .highlight");
+      const inputs = document.querySelectorAll("input[type='text']");
+
+      boxes.forEach((box) => {
+        box.style.border = "2px solid red";
+      });
+
+      console.dir(document.querySelectorAll(".item"));
+    </script>
+  </body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button>버튼</button>
+    <script>
+      //   요소.addEventListener("이벤트이름", 콜백함수);
+
+      const button = document.querySelector("button");
+
+      button.addEventListener("click", function () {
+        console.log("3-1. 버튼이 클릭되었습니다!");
+        //alert("버튼이 클릭되었습니다!");
+      });
+
+      console.log("1. 이벤트 등록 시작");
+
+      button.addEventListener("click", function () {
+        console.log("3-2. 클릭됨 - 콜백 함수 실행");
+      });
+
+      console.log("2. 이벤트 등록 완료");
+
+      // ------------------
+      function handleClick() {
+        console.log("3-3. 클릭되었습니다!");
+        //alert("클릭되었습니다!");
+      }
+
+      button.addEventListener("click", handleClick);
+
+      button.addEventListener("click", () => console.log("4-1. 첫 번째 작업"));
+      button.addEventListener("click", () => console.log("4-2. 두 번째 작업"));
+
+      // ------------------
+
+      button.addEventListener("click", function () {
+        console.log(this); // 클릭된 버튼 요소
+      });
+
+      button.addEventListener("click", () => {
+        console.log(this); // window 객체 (혹은 상위 스코프)
+      });
+    </script>
+  </body>
+</html>

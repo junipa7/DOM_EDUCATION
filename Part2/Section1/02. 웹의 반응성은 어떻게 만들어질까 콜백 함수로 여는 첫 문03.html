@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button>버튼</button>
+    <script>
+      const button = document.querySelector("button");
+
+      button.addEventListener("click", sayHello);
+
+      // 주의
+      // 잘못된 사용 : sayHello함수가 즉시 실행되고  클릭시에는 반응 없음.
+      button.addEventListener("click", sayHello());
+      button.addEventListener("click", sayHello("잘못된 사용 : sayHello함수가 즉시 실행되고  클릭시에는 반응 없음."));
+
+      button.addEventListener("click", function () {
+        sayHello("민지");
+      });
+
+      button.addEventListener("click", () => {
+        sayHello("민지2");
+      });
+
+      function sayHello(username) {
+        console.log(username + "👋 안녕하세요!");
+      }
+    </script>
+  </body>
+</html>

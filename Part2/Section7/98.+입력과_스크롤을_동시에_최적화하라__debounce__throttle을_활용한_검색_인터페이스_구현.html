@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>이벤트 최적화 미션</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 30px;
+      }
+
+      input[type="text"] {
+        padding: 10px;
+        font-size: 16px;
+        width: 300px;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+      }
+
+      #results {
+        list-style: none;
+        padding: 0;
+        margin-top: 10px;
+        width: 300px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #fff;
+      }
+
+      #results li {
+        padding: 8px 12px;
+        border-bottom: 1px solid #eee;
+      }
+
+      #results li:last-child {
+        border-bottom: none;
+      }
+
+      #results mark {
+        background-color: yellow;
+        font-weight: bold;
+      }
+
+      #scroll-box {
+        background-color: #f9f9f9;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>이벤트 성능 최적화 미션</h2>
+
+    <section>
+      <label for="search">🔍 검색창 (debounce + 자동완성)</label><br />
+      <input
+        type="text"
+        id="search"
+        placeholder="검색어를 입력하세요"
+        autocomplete="off"
+      />
+      <ul id="results"></ul>
+    </section>
+
+    <section style="margin-top: 50px">
+      <div id="scroll-box" style="height: 1500px">
+        <p style="position: fixed; top: 10px">
+          ⬇️ 아래로 스크롤하면 색상이 바뀝니다
+        </p>
+      </div>
+    </section>
+
+    <script>
+      // ✅ 검색어 배열
+      const keywords = [
+        "JavaScript",
+        "Java",
+        "Python",
+        "React",
+        "Vue",
+        "Angular",
+        "Node.js",
+        "Express",
+        "TypeScript",
+        "HTML",
+        "CSS",
+        "Django",
+        "Flask",
+        "Next.js",
+        "Nuxt.js",
+        "Tailwind",
+        "Bootstrap",
+        "Webpack",
+        "Vite",
+        "MongoDB",
+        "MySQL",
+        "PostgreSQL",
+        "GraphQL",
+        "REST API",
+        "DOM",
+        "EventListener",
+        "throttle",
+        "debounce",
+        "async",
+        "await",
+      ];
+
+      // ✅ debounce 함수 정의
+      function debounce(callback, delay) {
+        let timerId;
+        return function (...args) {
+          clearTimeout(timerId);
+          timerId = setTimeout(() => {
+            callback.apply(this, args);
+          }, delay);
+        };
+      }
+
+      // ✅ throttle 함수 정의
+      function throttle(callback, delay) {
+        let waiting = false;
+        return function (...args) {
+          if (!waiting) {
+            callback.apply(this, args);
+            waiting = true;
+            setTimeout(() => {
+              waiting = false;
+            }, delay);
+          }
+        };
+      }
+
+      // ✅ 검색창 + 결과 DOM 요소
+      const searchInput = document.getElementById("search");
+      const results = document.getElementById("results");
+
+      // ✅ 검색 필터 함수 (입력값 포함 여부 + 하이라이팅)
+      function searchKeywords(value) {
+        results.innerHTML = "";
+
+        if (value.trim() === "") return;
+
+        const filtered = keywords.filter((word) =>
+          word.toLowerCase().includes(value.toLowerCase())
+        );
+
+        if (filtered.length === 0) {
+          const li = document.createElement("li");
+          li.textContent = "검색 결과가 없습니다.";
+          results.appendChild(li);
+          return;
+        }
+
+        filtered.forEach((word) => {
+          const li = document.createElement("li");
+          const regex = new RegExp(`(${value})`, "gi");
+          const highlighted = word.replace(regex, "<mark>$1</mark>");
+          li.innerHTML = highlighted;
+          results.appendChild(li);
+        });
+      }
+
+      // ✅ 입력 이벤트 연결 (debounce 적용)
+      searchInput.addEventListener(
+        "input",
+        debounce(function () {
+          searchKeywords(this.value);
+          console.log("🔎 검색 실행:", this.value);
+        }, 500)
+      );
+
+      // ✅ 스크롤 이벤트 연결 (throttle 적용)
+      const scrollBox = document.getElementById("scroll-box");
+      const colors = ["#f9f9f9", "#e3f2fd", "#fff3e0", "#fce4ec", "#f3e5f5"];
+      let colorIndex = 0;
+
+      window.addEventListener(
+        "scroll",
+        throttle(function () {
+          colorIndex = (colorIndex + 1) % colors.length;
+          scrollBox.style.backgroundColor = colors[colorIndex];
+          console.log("📜 스크롤 처리");
+        }, 200)
+      );
+    </script>
+  </body>
+</html>

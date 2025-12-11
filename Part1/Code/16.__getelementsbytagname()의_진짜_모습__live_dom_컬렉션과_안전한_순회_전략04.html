@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <ul id="menu">
+      <li>Home</li>
+      <li>About</li>
+    </ul>
+
+    <ul id="footer">
+      <li>Contact</li>
+      <li>Privacy</li>
+    </ul>
+
+    <script>
+      //   const list = document.getElementsByTagName("li");
+      //   for (let i = 0; i < list.length; i++) {
+      //     list[i].remove(); // ❌ 삭제 도중 리스트가 갱신되어 인덱스 밀림 발생
+      //   }
+
+      const list = document.getElementsByTagName("li");
+      const copy = Array.from(list);
+
+      copy.forEach((item) => item.remove()); // ✅ 모든 항목 안정적으로 삭제
+    </script>
+  </body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .completed {
+        text-decoration: line-through;
+        color: gray;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="itemList">
+      <li>
+        <span class="item-text">Item 1</span>
+        <button data-action="complete">완료</button>
+        <button data-action="delete">삭제</button>
+      </li>
+      <li>
+        <span class="item-text">Item 2</span>
+        <button data-action="complete">완료</button>
+        <button data-action="delete">삭제</button>
+      </li>
+    </ul>
+
+    <script>
+      const itemList = document.getElementById("itemList");
+
+      itemList.addEventListener("click", function (event) {
+        const action = event.target.dataset.action;
+
+        if (!action) return;
+
+        const listItem = event.target.closest("li");
+
+        if (action === "delete") {
+          listItem.remove();
+        }
+
+        if (action === "complete") {
+          const text = listItem.querySelector(".item-text");
+          text.classList.toggle("completed");
+        }
+      });
+    </script>
+  </body>
+</html>

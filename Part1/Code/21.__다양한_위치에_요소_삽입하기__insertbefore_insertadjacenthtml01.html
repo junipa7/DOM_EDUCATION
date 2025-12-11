@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <ul id="fruits">
+      <li>🍎 Apple</li>
+      <li>🍌 Banana</li>
+    </ul>
+
+    <script>
+      //   parentNode.insertBefore(newNode, referenceNode);
+      const fruits = document.getElementById("fruits");
+      const banana = fruits.children[1];
+
+      const newItem = document.createElement("li");
+      newItem.textContent = "🍊 Orange";
+
+      fruits.insertBefore(newItem, banana);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>장바구니 (느린 버전)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        background: #f9fafb;
+        color: #111;
+      }
+      header {
+        padding: 16px;
+        background: #fff;
+        border-bottom: 1px solid #ddd;
+      }
+      main {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .cart-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        background: #fff;
+        border: 1px solid #ddd;
+        margin-bottom: 12px;
+        border-radius: 8px;
+      }
+      .cart-item img {
+        max-width: 100%;
+      } /* 크기 없음 → CLS */
+      .cart-item .info {
+        flex: 1;
+      }
+      .actions {
+        margin-top: 16px;
+        display: flex;
+        gap: 8px;
+      }
+      .btn {
+        padding: 10px 14px;
+        border: 0;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      .btn.primary {
+        background: #2563eb;
+        color: #fff;
+      }
+      .btn.outline {
+        background: #fff;
+        border: 1px solid #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <header>🛒 장바구니</header>
+    <main>
+      <div id="cart"></div>
+      <div class="actions">
+        <input type="text" id="coupon" placeholder="할인 코드 입력" />
+        <button class="btn outline" id="btn-coupon">할인 코드 적용</button>
+        <button class="btn primary" id="btn-pay">결제하기</button>
+      </div>
+    </main>
+
+    <script>
+      const cart = document.getElementById("cart");
+      // 50개 상품 → 이미지 모두 즉시 다운로드
+      for (let i = 1; i <= 50; i++) {
+        const div = document.createElement("div");
+        div.className = "cart-item";
+        div.innerHTML = `
+        <img src="https://picsum.photos/200/150?random=${i}" alt="상품${i}">
+        <div class="info">
+          <h4>상품 ${i}</h4>
+          <p>₩${(i * 1000).toLocaleString()}</p>
+          <label>수량: <input type="number" value="1" min="1"></label>
+        </div>`;
+        cart.appendChild(div);
+      }
+
+      // 문제1: 할인 코드 동기 처리 → UI 멈춤
+      document.getElementById("btn-coupon").addEventListener("click", () => {
+        const start = performance.now();
+        while (performance.now() - start < 500) {} // 500ms 멈춤
+        alert("할인 코드가 적용되었습니다.");
+      });
+
+      // 문제2: 결제 버튼도 동기 블로킹
+      document.getElementById("btn-pay").addEventListener("click", () => {
+        const start = performance.now();
+        while (performance.now() - start < 800) {} // 800ms 멈춤
+        alert("결제가 완료되었습니다!");
+      });
+    </script>
+  </body>
+</html>

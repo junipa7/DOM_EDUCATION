@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>웹폰트 Preload + Lazy Loading 예시</title>
+    <!-- 폰트 미리 불러오기 (Preload) -->
+    <link
+      rel="preload"
+      as="font"
+      href="https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxM.woff2"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+
+    <style>
+      /* 웹폰트 등록 */
+      @font-face {
+        font-family: "MyPreloadedFont";
+        src: url("https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxM.woff2")
+          format("woff2");
+        font-display: swap; /* 로딩 전략: 기본 폰트 먼저 → 준비되면 교체 */
+      }
+
+      body {
+        font-family: "MyPreloadedFont", sans-serif;
+        font-size: 2rem;
+        padding: 40px;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>웹폰트 Preload 예시</h1>
+    <p>
+      이 텍스트는 Roboto 폰트를 preload로 미리 다운로드한 뒤, CSS의 @font-face를
+      통해 즉시 적용한 예시입니다.
+    </p>
+    <p>
+      preload를 사용하지 않으면, CSS 파싱 시점에서 폰트를 처음 요청하기 때문에
+      화면이 기본 폰트로 먼저 보였다가 교체되는 FOUT 현상이 발생할 수 있습니다.
+    </p>
+  </body>
+</html>

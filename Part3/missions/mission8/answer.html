@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>[ANSWER] Critical CSS 분리 + 지연 로딩</title>
+
+  <!-- ✅ Critical CSS: 첫 화면에 꼭 필요한 최소 스타일만 인라인 -->
+  <style>
+    body {
+      margin:0;
+      font-family:sans-serif;
+      background:#0b1220;
+      color:#e5e7eb;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+      flex-direction:column;
+      text-align:center;
+    }
+    h1 { font-size:2rem; margin:0 0 0.5rem }
+    p { margin:0 0 1rem; color:#94a3b8 }
+    button {
+      padding:12px 20px;
+      border:none;
+      border-radius:8px;
+      background:#2563eb;
+      color:white;
+      cursor:pointer;
+    }
+    button:hover { background:#1d4ed8 }
+  </style>
+
+  <!-- ✅ 비필수 CSS는 preload + onload 방식으로 지연 로딩 -->
+  <link rel="preload" href="/css/theme.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/css/theme.css"></noscript>
+
+  <!-- ✅ 대체 패턴: media="print" 후 onload 시점에 변경 -->
+  <!--
+  <link rel="stylesheet" href="/css/theme.css" media="print" onload="this.media='all'">
+  -->
+</head>
+<body>
+  <section class="hero">
+    <h1 class="title">빠른 첫 화면이 UX를 살립니다</h1>
+    <p class="subtitle">Critical CSS만 먼저 적용하세요</p>
+    <button class="cta">지금 시작</button>
+  </section>
+</body>
+</html>

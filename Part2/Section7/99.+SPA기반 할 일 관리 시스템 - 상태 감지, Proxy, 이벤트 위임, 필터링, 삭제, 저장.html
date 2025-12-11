@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>이벤트 최적화 미션</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+      }
+
+      #app {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px #ccc;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      h2 {
+        text-align: center;
+      }
+
+      .filter {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
+      .filter button {
+        padding: 6px 12px;
+        border: none;
+        background: #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .filter button.active {
+        background: #4caf50;
+        color: white;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 20px 0;
+      }
+
+      li {
+        background: #f9f9f9;
+        padding: 10px 12px;
+        border-left: 5px solid #ccc;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+      }
+
+      li.done {
+        text-decoration: line-through;
+        color: #888;
+        background: #e0e0e0;
+      }
+
+      li[data-tag="work"] {
+        border-color: #2196f3;
+      }
+
+      li[data-tag="study"] {
+        border-color: #ff9800;
+      }
+
+      li[data-tag="life"] {
+        border-color: #9c27b0;
+      }
+
+      li button.delete {
+        background: crimson;
+        border: none;
+        color: white;
+        border-radius: 4px;
+        padding: 4px 8px;
+        font-size: 12px;
+        margin-left: 10px;
+        cursor: pointer;
+      }
+
+      .add-section {
+        display: flex;
+        gap: 10px;
+      }
+
+      input,
+      select,
+      button {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      button#add-btn {
+        background: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <h2>📝 할 일 관리 (SPA + 태그 필터 + 상태 저장)</h2>
+
+      <div class="filter">
+        <button data-tag="all" class="active">전체</button>
+        <button data-tag="work">업무</button>
+        <button data-tag="study">공부</button>
+        <button data-tag="life">일상</button>
+      </div>
+
+      <ul id="todo-list"></ul>
+
+      <div class="add-section">
+        <input type="text" id="todo-input" placeholder="할 일을 입력하세요" />
+        <select id="tag-select">
+          <option value="work">업무</option>
+          <option value="study">공부</option>
+          <option value="life">일상</option>
+        </select>
+        <button id="add-btn">추가</button>
+      </div>
+    </div>
+
+    <script>
+      const state = {
+        todos: [],
+        filter: "all",
+      };
+
+      const proxyState = new Proxy(state, {
+        set(target, prop, value) {
+          target[prop] = value;
+          render();
+          saveToStorage();
+          return true;
+        },
+      });
+
+      const $list = document.getElementById("todo-list");
+      const $input = document.getElementById("todo-input");
+      const $tag = document.getElementById("tag-select");
+      const $addBtn = document.getElementById("add-btn");
+      const $filterButtons = document.querySelector(".filter");
+
+      loadFromStorage();
+      render();
+
+      $addBtn.addEventListener("click", addTodo);
+      $input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") addTodo();
+      });
+
+      $list.addEventListener("click", handleListClick);
+      $filterButtons.addEventListener("click", (e) => {
+        if (e.target.tagName !== "BUTTON") return;
+        proxyState.filter = e.target.dataset.tag;
+      });
+
+      function addTodo() {
+        const text = $input.value.trim();
+        const tag = $tag.value;
+
+        if (!text) return alert("할 일을 입력하세요.");
+
+        const isDuplicate = proxyState.todos.some(
+          (todo) => todo.text === text && todo.tag === tag
+        );
+        if (isDuplicate) return alert("같은 태그에 동일한 내용이 존재합니다.");
+
+        const newTodo = { text, tag, done: false };
+        proxyState.todos = [...proxyState.todos, newTodo];
+        $input.value = "";
+      }
+
+      function handleListClick(e) {
+        const $target = e.target;
+
+        if ($target.classList.contains("delete")) {
+          const idx = $target.parentElement.dataset.index;
+          proxyState.todos = proxyState.todos.filter(
+            (_, i) => i !== Number(idx)
+          );
+        }
+
+        if (
+          $target.tagName === "LI" ||
+          $target.parentElement.tagName === "LI"
+        ) {
+          const $li =
+            $target.tagName === "LI" ? $target : $target.parentElement;
+          const idx = $li.dataset.index;
+
+          proxyState.todos = proxyState.todos.map((todo, i) =>
+            i === Number(idx) ? { ...todo, done: !todo.done } : todo
+          );
+        }
+      }
+
+      function render() {
+        $list.innerHTML = "";
+
+        const filtered =
+          proxyState.filter === "all"
+            ? proxyState.todos
+            : proxyState.todos.filter((todo) => todo.tag === proxyState.filter);
+
+        filtered.forEach((todo, index) => {
+          const $li = document.createElement("li");
+          $li.textContent = todo.text;
+          $li.dataset.index = index;
+          $li.dataset.tag = todo.tag;
+          if (todo.done) $li.classList.add("done");
+
+          const $deleteBtn = document.createElement("button");
+          $deleteBtn.textContent = "삭제";
+          $deleteBtn.className = "delete";
+          $li.appendChild($deleteBtn);
+
+          $list.appendChild($li);
+        });
+
+        document.querySelectorAll(".filter button").forEach(($btn) => {
+          $btn.classList.toggle(
+            "active",
+            $btn.dataset.tag === proxyState.filter
+          );
+        });
+      }
+
+      function saveToStorage() {
+        const plainTodos = proxyState.todos.map(({ text, tag }) => ({
+          text,
+          tag,
+        }));
+        localStorage.setItem("todos", JSON.stringify(plainTodos));
+      }
+
+      function loadFromStorage() {
+        const raw = localStorage.getItem("todos");
+        if (!raw) return;
+        try {
+          const loaded = JSON.parse(raw);
+          proxyState.todos = loaded.map((todo) => ({ ...todo, done: false }));
+        } catch (e) {
+          console.error("로컬스토리지 불러오기 실패", e);
+        }
+      }
+    </script>
+  </body>
+</html>

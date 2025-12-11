@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <ul>
+      <li class="item" data-id="1">Item 1</li>
+      <li class="item" data-id="2">Item 2</li>
+      <li class="item" data-id="3" hidden>Item 3</li>
+    </ul>
+
+    <script>
+      const secondItem = document.querySelector('.item[data-id="2"]');
+      console.log(secondItem.textContent); // Item 2
+    </script>
+  </body>
+</html>

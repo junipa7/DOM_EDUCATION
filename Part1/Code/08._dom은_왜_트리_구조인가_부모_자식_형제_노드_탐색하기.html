@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div>
+      <h1>Hello</h1>
+      <p>World</p>
+    </div>
+
+    <script>
+      const div = document.querySelector("div");
+      console.dir(div);
+
+      //   div.parentNode; // <body>
+      //   div.childNodes; // NodeList(5) [text, h1, text, p, text]
+      //   div.children; // HTMLCollection(2) [h1, p]
+      //   div.firstChild; // #text (줄바꿈 포함)
+      //   div.firstElementChild; // <h1>
+
+      const h1 = document.querySelector("h1");
+      //   h1.nextSibling; // #text (줄바꿈 포함)
+      //   h1.nextElementSibling; // <p>
+    </script>
+  </body>
+</html>

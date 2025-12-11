@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>[BASE] 느린 신상품 피드</title>
+  <style>
+    :root{--maxw:1000px}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Noto Sans,sans-serif}
+    header{position:sticky;top:0;background:#fff;border-bottom:1px solid #eee;padding:12px 16px;z-index:10;font-weight:700}
+    .list{max-width:var(--maxw);margin:0 auto;padding:12px 16px}
+    .item{display:flex;gap:12px;align-items:center;padding:12px 8px;border-bottom:1px solid #eee}
+    .item img{width:72px;height:72px;border-radius:8px;object-fit:cover}
+    .title{font-weight:600}
+  </style>
+</head>
+<body>
+<header>신상품 피드(전부 그리기)</header>
+<main class="list" id="list"></main>
+
+<script>
+  // 더미 데이터 10000개 생성
+  const data = Array.from({length:10000}, (_,i)=>({
+    id:i+1,
+    title:`상품 #${i+1}`,
+    img:`https://picsum.photos/seed/${i+1}/128/128`,
+    price:(Math.random()*90000+10000|0).toLocaleString('ko-KR')
+  }));
+
+  const list = document.getElementById('list');
+
+  // 문제: 1만개 전부 DOM 생성 + 이미지 즉시 로드
+  for(const p of data){
+    const row = document.createElement('div');
+    row.className = 'item';
+    row.innerHTML = `
+      <img src="${p.img}" alt="${p.title}">
+      <div>
+        <div class="title">${p.title}</div>
+        <div class="muted">₩${p.price}</div>
+      </div>`;
+    list.appendChild(row);
+  }
+</script>
+</body>
+</html>

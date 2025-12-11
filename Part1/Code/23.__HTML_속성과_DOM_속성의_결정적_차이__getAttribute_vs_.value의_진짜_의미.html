@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <input type="text" id="myInput" value="초기값" />
+    <button id="changeAttr">setAttribute로 변경</button>
+    <button id="changeProp">DOM 속성으로 변경</button>
+    <button id="logValues">현재 값 확인</button>
+
+    <script>
+      const input = document.getElementById("myInput");
+      const btnAttr = document.getElementById("changeAttr");
+      const btnProp = document.getElementById("changeProp");
+      const btnLog = document.getElementById("logValues");
+
+      btnAttr.addEventListener("click", () => {
+        input.setAttribute("value", "속성으로 변경됨");
+        console.log("getAttribute:", input.getAttribute("value"));
+        console.log("input.value:", input.value);
+      });
+
+      btnProp.addEventListener("click", () => {
+        input.value = "DOM 속성으로 변경됨";
+        console.log("getAttribute:", input.getAttribute("value"));
+        console.log("input.value:", input.value);
+      });
+
+      btnLog.addEventListener("click", () => {
+        console.log("getAttribute:", input.getAttribute("value"));
+        console.log("input.value:", input.value);
+      });
+    </script>
+  </body>
+</html>

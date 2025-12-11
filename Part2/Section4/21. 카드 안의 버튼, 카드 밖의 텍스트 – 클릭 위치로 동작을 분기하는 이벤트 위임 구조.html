@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <ul id="product-list">
+      <li class="card">
+        <span class="name">상품 A</span>
+        <button class="delete">삭제</button>
+      </li>
+      <li class="card">
+        <span class="name">상품 B</span>
+        <button class="delete">삭제</button>
+      </li>
+    </ul>
+
+    <script>
+      const list = document.getElementById("product-list");
+
+      list.addEventListener("click", (event) => {
+        const card = event.target.closest(".card");
+        if (!card) return;
+
+        if (event.target.matches(".delete")) {
+          console.log("삭제 버튼 클릭 - 삭제 로직 실행");
+          return;
+        }
+
+        console.log("카드 클릭 - 상세 페이지 이동");
+      });
+    </script>
+  </body>
+</html>

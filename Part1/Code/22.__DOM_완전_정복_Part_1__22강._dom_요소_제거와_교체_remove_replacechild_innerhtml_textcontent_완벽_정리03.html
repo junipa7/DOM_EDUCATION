@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <ul id="fruits">
+      <li>🍎 Apple</li>
+      <li id="banana">🍌 Banana</li>
+      <li>🍇 Grape</li>
+    </ul>
+
+    <script>
+      //   parentNode.replaceChild(newNode, oldNode);
+      const list = document.getElementById("fruits");
+      const newItem = document.createElement("li");
+      newItem.textContent = "🍊 Orange";
+
+      const banana = document.getElementById("banana");
+      list.replaceChild(newItem, banana);
+    </script>
+  </body>
+</html>

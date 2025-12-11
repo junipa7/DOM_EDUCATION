@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form id="login-form">
+      <input type="text" name="username" placeholder="아이디" />
+      <input type="password" name="password" placeholder="비밀번호" />
+      <button type="submit">로그인</button>
+    </form>
+
+    <script>
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const form = event.target; // 현재 submit 이벤트가 발생한 <form> 요소
+          const username = form.username.value;
+          const password = form.password.value;
+
+          if (!username || !password) {
+            console.log("아이디와 비밀번호를 모두 입력해주세요.");
+            return;
+          }
+
+          console.log("아이디:", username);
+          console.log("비밀번호:", password);
+          console.log("서버로 전송 준비 완료!");
+        });
+    </script>
+  </body>
+</html>

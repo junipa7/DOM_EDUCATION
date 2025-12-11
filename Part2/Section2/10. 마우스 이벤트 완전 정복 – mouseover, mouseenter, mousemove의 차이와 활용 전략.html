@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="outer" style="padding: 50px; background: lightblue">
+      <div id="inner" style="padding: 30px; background: lightgreen">
+        안쪽 요소
+      </div>
+    </div>
+    
+
+    <script>
+      const outer = document.getElementById("outer");
+      const inner = document.getElementById("inner");
+
+      outer.addEventListener("mouseover", () => {
+        console.log("→ outer에서 mouseover 발생");
+      });
+      outer.addEventListener("mouseenter", () => {
+        console.log("→ outer에서 mouseenter 발생");
+      });
+      inner.addEventListener("mouseover", () => {
+        console.log("→ inner에서 mouseover 발생");
+      });
+      inner.addEventListener("mouseenter", () => {
+        console.log("→ inner에서 mouseenter 발생");
+      });
+
+      document.addEventListener("mousemove", function (event) {
+        console.log(`현재 위치: X=${event.clientX}, Y=${event.clientY}`);
+      });
+    </script>
+  </body>
+</html>
