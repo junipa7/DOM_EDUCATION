@@ -9,3 +9,4 @@ Check-Out time: 12:00 p.m.
 - One bed
 - xxxxx
 - yyyyyy
+- gggggggg
