@@ -8,3 +8,5 @@ Check-Out time: 12:00 p.m.
 - Wifi
 - One bed
 - zzzzz
+- xxxxx
+- yyyyyy
