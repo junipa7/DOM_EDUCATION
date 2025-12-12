@@ -7,3 +7,5 @@ Check-Out time: 12:00 p.m.
 [Convenience facilities]
 - Wifi
 - One bed
+- xxxxx
+- yyyyyy
