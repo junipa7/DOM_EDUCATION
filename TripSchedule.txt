@@ -7,9 +7,3 @@ Check-Out time: 12:00 p.m.
 [Convenience facilities]
 - Wifi
 - One bed
-- zzzzz
-- xxxxx
-- yyyyyy
-- gggggggg
-- 다시 병합 TEST 2차
-- 다시 병합 TEST 1차
